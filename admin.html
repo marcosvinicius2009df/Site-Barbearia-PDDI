@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Gestão - Barbearia do Marquinhos</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+</head>
+<body style="padding: 20px;">
+
+    <div id="login-admin" class="formulario-agendar" style="margin-top: 50px;">
+        <h2 style="text-align: center; color: var(--accent);">Acesso Administrativo</h2>
+        <input type="password" id="senha-admin" placeholder="Digite a senha master" style="margin-top: 20px;">
+        <button onclick="verificarAcesso()" class="btn">ENTRAR NO PAINEL</button>
+        <p style="text-align: center; margin-top: 15px;"><a href="index.html" style="color: #777; text-decoration: none;">Sair</a></p>
+    </div>
+
+    <div id="conteudo-admin" style="display: none; max-width: 1000px; margin: 0 auto;">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--accent); padding-bottom: 10px;">
+            <h1 style="color: var(--accent); font-size: 1.5rem;">GESTÃO ESTRATÉGICA</h1>
+            <button onclick="location.reload()" style="background: none; border: 1px solid red; color: red; padding: 5px 10px; cursor: pointer; border-radius: 5px;">Bloquear 🔒</button>
+        </header>
+
+        <div class="stats-bar" style="display: flex; gap: 20px; margin-bottom: 30px;">
+            <div class="stat-card" style="flex: 1; background: #1a1a1a; border: 1px solid var(--accent); padding: 20px; border-radius: 10px; text-align: center;">
+                <span id="total-cortes" style="font-size: 32px; color: var(--accent); font-weight: bold; display: block;">0</span>
+                <p style="text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Agendamentos</p>
+            </div>
+            <div class="stat-card" style="flex: 1; background: #1a1a1a; border: 1px solid var(--accent); padding: 20px; border-radius: 10px; text-align: center;">
+                <span id="faturamento-total" style="font-size: 32px; color: var(--accent); font-weight: bold; display: block;">R$ 0,00</span>
+                <p style="text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Faturamento Previsto</p>
+            </div>
+        </div>
+
+        <div id="lista-agendamentos" class="grid-agendamentos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+            </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
+            authDomain: "barbearia-do-marcos.firebaseapp.com",
+            databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com/",
+            projectId: "barbearia-do-marcos"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function verificarAcesso() {
+            const senha = document.getElementById('senha-admin').value;
+            if(senha === "marquinhos2026") {
+                document.getElementById('login-admin').style.display = 'none';
+                document.getElementById('conteudo-admin').style.display = 'block';
+                carregarAgendamentos();
+            } else {
+                alert("Senha incorreta!");
+            }
+        }
+
+        function carregarAgendamentos() {
+            database.ref('agendamentos').on('value', (snapshot) => {
+                const container = document.getElementById('lista-agendamentos');
+                const totalCortes = document.getElementById('total-cortes');
+                const faturamentoText = document.getElementById('faturamento-total');
+                
+                container.innerHTML = "";
+                let count = 0;
+                let soma = 0;
+
+                if (!snapshot.exists()) {
+                    container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #777;'>Nenhum agendamento pendente.</p>";
+                    totalCortes.innerText = "0";
+                    faturamentoText.innerText = "R$ 0,00";
+                    return;
+                }
+
+                snapshot.forEach((child) => {
+                    const id = child.key;
+                    const d = child.val();
+                    
+                    // Tratamento de dados para evitar NaN e Undefined
+                    const valorItem = parseFloat(d.valor) || 0;
+                    count++;
+                    soma += valorItem;
+
+                    const card = document.createElement('div');
+                    card.style = "background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 5px solid var(--accent); position: relative;";
+                    card.innerHTML = `
+                        <h3 style="color: var(--accent); margin-bottom: 10px;">${d.cliente || 'Cliente'}</h3>
+                        <p style="font-size: 14px; margin: 5px 0;"><strong>✂️ Serviço:</strong> ${d.servico || 'Não definido'}</p>
+                        <p style="font-size: 14px; margin: 5px 0;"><strong>📅 Horário:</strong> ${d.horario || 'Não definido'}</p>
+                        <p style="font-size: 14px; margin: 5px 0;"><strong>👤 Barbeiro:</strong> ${d.profissional || 'Marquinhos'}</p>
+                        <p style="font-size: 14px; margin: 5px 0;"><strong>📞 Tel:</strong> ${d.telefone || 'N/A'}</p>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button onclick="finalizarAtendimento('${id}')" style="flex: 1; background: #27ae60; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold;">Concluir</button>
+                            <a href="https://wa.me/55${d.telefone ? d.telefone.replace(/\D/g,'') : ''}" target="_blank" style="flex: 1; background: #25d366; color: white; text-align: center; text-decoration: none; padding: 8px; border-radius: 4px; font-weight: bold; font-size: 13px;">WhatsApp</a>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+                totalCortes.innerText = count;
+                faturamentoText.innerText = soma.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            });
+        }
+
+        function finalizarAtendimento(id) {
+            if(confirm("Deseja marcar como concluído? O registro será removido da lista.")) {
+                database.ref('agendamentos/' + id).remove();
+            }
+        }
+    </script>
+</body>
+</html>
