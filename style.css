@@ -1,11 +1,21 @@
-/* Configurações Globais */
+/* ==========================================================================
+   BARBEARIA DO MARQUINHOS - CSS OFICIAL COMPLETO
+   Versão: 2.0 (Com suporte a FAQ, Produtos, Login e LGPD)
+   ========================================================================== 
+*/
+
 :root {
+    --preto-abs: #050505;
     --preto: #0a0a0a;
     --cinza-card: #161616;
     --dourado: #d4af37;
+    --dourado-dark: #b8962d;
     --branco: #ffffff;
+    --cinza-texto: #888;
+    --sucesso: #27ae60;
 }
 
+/* Configurações Globais */
 * {
     margin: 0;
     padding: 0;
@@ -17,6 +27,8 @@ body {
     background-color: var(--preto);
     color: var(--branco);
     overflow-x: hidden;
+    color-scheme: dark; /* Garante que calendários e scrollbars fiquem dark */
+    scroll-behavior: smooth;
 }
 
 /* Navbar */
@@ -25,7 +37,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 5%;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     position: fixed;
     width: 100%;
     top: 0;
@@ -33,26 +45,49 @@ body {
     border-bottom: 1px solid var(--dourado);
 }
 
-.logo { font-weight: 700; color: var(--dourado); letter-spacing: 1px; }
+.logo { 
+    font-weight: 700; 
+    color: var(--dourado); 
+    letter-spacing: 1px; 
+    text-transform: uppercase;
+}
 
-.nav-links { display: flex; list-style: none; gap: 20px; align-items: center; }
+.nav-links { 
+    display: flex; 
+    list-style: none; 
+    gap: 20px; 
+    align-items: center; 
+}
 
-.nav-links a { color: var(--branco); text-decoration: none; font-size: 13px; transition: 0.3s; }
+.nav-links a { 
+    color: var(--branco); 
+    text-decoration: none; 
+    font-size: 13px; 
+    font-weight: 400;
+    transition: 0.3s; 
+}
 
 .nav-links a:hover { color: var(--dourado); }
 
 .btn-agendar-topo {
     background: var(--dourado);
     color: #000 !important;
-    padding: 6px 15px;
+    padding: 8px 18px;
     border-radius: 4px;
-    font-weight: bold;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.btn-agendar-topo:hover {
+    background: var(--branco);
+    transform: scale(1.05);
 }
 
 /* Hero Section */
 .hero {
     height: 100vh;
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop');
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
+                url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -61,108 +96,233 @@ body {
     text-align: center;
 }
 
-.hero-content h1 { font-size: 3rem; color: var(--dourado); margin-bottom: 10px; }
+.hero-content h1 { 
+    font-size: 3.5rem; 
+    color: var(--dourado); 
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    color: var(--branco);
+    opacity: 0.9;
+}
 
 .btn-principal {
     display: inline-block;
-    margin-top: 20px;
-    padding: 12px 30px;
+    margin-top: 30px;
+    padding: 15px 40px;
     background: var(--dourado);
     color: #000;
     text-decoration: none;
     font-weight: bold;
     border-radius: 5px;
+    transition: 0.4s;
 }
 
-/* Seção de Serviços (Cards) */
-.secao-servicos {
-    padding: 80px 5%;
+.btn-principal:hover {
+    background: var(--branco);
+    transform: translateY(-3px);
+}
+
+/* Seções Gerais */
+section {
+    padding: 100px 5%;
     text-align: center;
 }
 
-.titulo-secao { font-size: 2.2rem; color: var(--dourado); margin-bottom: 40px; text-transform: uppercase; }
+.titulo-secao { 
+    font-size: 2.5rem; 
+    color: var(--dourado); 
+    margin-bottom: 50px; 
+    text-transform: uppercase; 
+    position: relative;
+    display: inline-block;
+}
 
+.titulo-secao::after {
+    content: '';
+    width: 50px;
+    height: 3px;
+    background: var(--dourado);
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Grid de Cards (Serviços e Produtos) */
 .cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
-    max-width: 1100px;
+    gap: 30px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
 .card-item {
     background: var(--cinza-card);
-    padding: 35px;
-    border-radius: 12px;
-    border: 1px solid #333;
-    transition: 0.3s;
+    padding: 40px;
+    border-radius: 15px;
+    border: 1px solid #222;
+    transition: 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.card-item:hover { border-color: var(--dourado); transform: translateY(-5px); }
+.card-item:hover { 
+    border-color: var(--dourado); 
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1);
+}
 
-.preco-tag { display: block; margin-top: 15px; font-size: 1.6rem; color: var(--dourado); font-weight: bold; }
+.card-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
 
-/* Formulário de Agendamento */
+.preco-tag { 
+    display: block; 
+    margin-top: 20px; 
+    font-size: 1.8rem; 
+    color: var(--dourado); 
+    font-weight: 700; 
+}
+
+/* Formulários (Agendamento e Login) */
 .container-form {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 100px 20px;
+    padding: 120px 20px;
 }
 
 .form-box {
     background: var(--cinza-card);
-    padding: 40px;
-    border-radius: 15px;
+    padding: 50px;
+    border-radius: 20px;
     width: 100%;
-    max-width: 500px;
-    border: 1px solid #222;
+    max-width: 450px;
+    border: 1px solid #333;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
 }
 
-.form-box h2 { text-align: center; color: var(--dourado); margin-bottom: 25px; }
+.form-box h2 { text-align: center; color: var(--dourado); margin-bottom: 30px; }
 
-.campo { display: flex; flex-direction: column; margin-bottom: 18px; }
+.campo { display: flex; flex-direction: column; margin-bottom: 20px; }
 
-.campo label { color: var(--dourado); margin-bottom: 6px; font-size: 14px; }
+.campo label { color: var(--dourado); margin-bottom: 8px; font-size: 14px; font-weight: 600; }
 
 .campo input, .campo select {
-    padding: 10px;
-    background: #222;
+    padding: 12px;
+    background: #1e1e1e;
     border: 1px solid #444;
     color: #fff;
-    border-radius: 4px;
+    border-radius: 6px;
+    outline: none;
+    transition: 0.3s;
 }
+
+.campo input:focus { border-color: var(--dourado); }
 
 .btn-confirmar {
     width: 100%;
     padding: 15px;
     background: var(--dourado);
     border: none;
-    font-weight: bold;
+    color: #000;
+    font-weight: 800;
     cursor: pointer;
-    margin-top: 15px;
-    border-radius: 5px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    transition: 0.3s;
 }
+
+.btn-confirmar:hover { background: var(--branco); }
 
 /* Grade de Horários */
 .grade-horarios {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 12px;
     margin-top: 10px;
 }
 
 .btn-horario {
-    padding: 10px;
-    background: #333;
-    border: none;
+    padding: 12px;
+    background: #252525;
+    border: 1px solid #333;
     color: white;
     cursor: pointer;
-    border-radius: 3px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: 0.2s;
 }
 
-.btn-horario.selecionado { background: var(--dourado); color: black; }
+.btn-horario:hover { border-color: var(--dourado); }
 
-/* Footer */
-.footer { padding: 40px; text-align: center; color: #666; font-size: 12px; }
+.btn-horario.selecionado { 
+    background: var(--dourado); 
+    color: black; 
+    font-weight: 700; 
+    border-color: var(--dourado);
+}
+
+/* FAQ */
+.secao-faq { background: var(--preto-abs); }
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.faq-item {
+    background: var(--cinza-card);
+    margin-bottom: 20px;
+    padding: 25px;
+    border-radius: 10px;
+    border-left: 4px solid var(--dourado);
+}
+
+.faq-item h3 { color: var(--dourado); font-size: 1.1rem; margin-bottom: 10px; }
+
+.faq-item p { color: var(--cinza-texto); line-height: 1.6; }
+
+/* LGPD Footer */
+.footer {
+    padding: 60px 5% 30px;
+    text-align: center;
+    background: #050505;
+    border-top: 1px solid #111;
+}
+
+.lgpd-info {
+    max-width: 800px;
+    margin: 0 auto 30px;
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+.lgpd-info a { color: var(--dourado); text-decoration: none; }
+
+.copyright {
+    color: #333;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .hero-content h1 { font-size: 2.2rem; }
+    .navbar { padding: 15px 3%; }
+    .nav-links { display: none; } /* Idealmente aqui entraria um menu Hamburguer */
+    .form-box { padding: 30px 20px; }
+}
