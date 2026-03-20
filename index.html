@@ -6,18 +6,27 @@
     <title>Barbearia do Marquinhos - Oficial</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 </head>
 <body>
 
     <nav class="navbar">
         <div class="logo">BARBEARIA DO MARQUINHOS</div>
+        
+        <div class="menu-toggle" id="mobile-menu">☰</div>
+        
         <ul class="nav-links">
             <li><a href="#home">Início</a></li>
             <li><a href="#servicos">Serviços</a></li>
-            <li><a href="produtos.html">Produtos</a></li>
+            <li><a href="produtos.html">🛒 Carrinho</a></li>
             <li><a href="#faq">FAQ</a></li>
             <li><a href="agendar.html" class="btn-agendar-topo">AGENDAR AGORA</a></li>
-            <li><a href="login.html">Minha Conta</a></li>
+            
+            <li><a href="login.html" id="nav-conta">Minha Conta</a></li>
+            <li id="nav-logout" style="display: none;"><a href="#" onclick="fazerLogout()" style="color: #ff4d4d;">Sair</a></li>
         </ul>
     </nav>
 
@@ -30,16 +39,16 @@
     </header>
 
     <section id="servicos" class="secao-servicos">
-        <h2 class="titulo-secao">Nossa Arte</h2>
+        <h2 class="titulo-secao">Nossos Serviços</h2>
         <div class="cards-container">
             <div class="card-item">
                 <h3>Corte Clássico</h3>
-                <p>Tesoura ou máquina, acabamento impecável.</p>
+                <p>Degradê, tesoura, finalização impecável.</p>
                 <span class="preco-tag">R$ 40,00</span>
             </div>
             <div class="card-item">
                 <h3>Barba Completa</h3>
-                <p>Alinhamento com toalha quente e navalha.</p>
+                <p>Toalha quente e alinhamento na navalha.</p>
                 <span class="preco-tag">R$ 30,00</span>
             </div>
             <div class="card-item">
@@ -72,8 +81,13 @@
         <div class="lgpd-info">
             <p>Ao utilizar este site, você concorda com a nossa <a href="#">Política de Privacidade</a>. Coletamos apenas os dados necessários para o seu agendamento, em conformidade com a LGPD.</p>
         </div>
-        <p class="copyright">&copy; 2026 Barbearia do Marquinhos - Qualidade Acima de Tudo.</p>
+        <p class="copyright">&copy; 2026 Barbearia do Marquinhos. Todos os direitos reservados.</p>
+        
+        <div style="margin-top: 20px;">
+            <a href="admin.html" style="color: var(--texto-cinza); text-decoration: none; font-size: 0.8rem;">Área Restrita (Admin)</a>
+        </div>
     </footer>
 
+    <script src="script.js"></script>
 </body>
 </html>

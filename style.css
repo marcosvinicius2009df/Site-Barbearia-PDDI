@@ -1,21 +1,28 @@
 /* ==========================================================================
-   BARBEARIA DO MARQUINHOS - CSS OFICIAL COMPLETO
-   Versão: 2.0 (Com suporte a FAQ, Produtos, Login e LGPD)
-   ========================================================================== 
-*/
+   BARBEARIA DO MARQUINHOS - OMNI-STYLES V.ULTIMATE (15x LEAP)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --preto-abs: #050505;
-    --preto: #0a0a0a;
-    --cinza-card: #161616;
-    --dourado: #d4af37;
-    --dourado-dark: #b8962d;
+    /* Cores Ultra-Premium */
+    --bg-fundo: #030303;       
+    --bg-card: rgba(18, 18, 18, 0.6);        
+    --bg-input: rgba(255, 255, 255, 0.03);       
+    --dourado: #d4af37;        
+    --dourado-hover: #e8c555;  
     --branco: #ffffff;
-    --cinza-texto: #888;
-    --sucesso: #27ae60;
+    --texto-cinza: #888888;
+    --borda: rgba(212, 175, 55, 0.1);
+    --sucesso: #00e676; /* Verde Neon para o Admin */
+    --perigo: #ff1744;  /* Vermelho Neon */
+    
+    /* Variáveis de Transição e Efeitos */
+    --transicao: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    --vidro-blur: blur(25px);
+    --sombra-neon: 0 0 20px rgba(212, 175, 55, 0.2);
 }
 
-/* Configurações Globais */
 * {
     margin: 0;
     padding: 0;
@@ -24,305 +31,373 @@
 }
 
 body {
-    background-color: var(--preto);
+    background-color: var(--bg-fundo);
     color: var(--branco);
+    line-height: 1.6;
     overflow-x: hidden;
-    color-scheme: dark; /* Garante que calendários e scrollbars fiquem dark */
-    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    /* Adiciona uma textura de grade ultra fina no fundo global */
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
 }
 
-/* Navbar */
+::selection { background-color: var(--dourado); color: #000; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dourado); }
+
+/* ==========================================================================
+   ANIMAÇÕES AVANÇADAS (OMNI-ANIMATIONS)
+   ========================================================================== */
+@keyframes slideUpFade {
+    0% { opacity: 0; transform: translateY(50px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes floatElement {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes shimmerCard {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+@keyframes pulseNeon {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+    70% { box-shadow: 0 0 0 25px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+/* ==========================================================================
+   1. NAVBAR - GLASSMORPHISM DINÂMICO
+   ========================================================================== */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 5%;
-    background: rgba(0, 0, 0, 0.95);
+    padding: 20px 5%;
+    background-color: rgba(3, 3, 3, 0.6);
+    backdrop-filter: var(--vidro-blur);
+    -webkit-backdrop-filter: var(--vidro-blur);
+    border-bottom: 1px solid var(--borda); 
     position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-    border-bottom: 1px solid var(--dourado);
+    top: 0; width: 100%; z-index: 9999;
 }
 
-.logo { 
-    font-weight: 700; 
-    color: var(--dourado); 
-    letter-spacing: 1px; 
+.logo {
+    font-weight: 800;
+    color: var(--branco);
+    font-size: clamp(1.2rem, 2vw, 1.8rem); /* Tipografia Fluida */
+    letter-spacing: 4px;
     text-transform: uppercase;
+    text-shadow: var(--sombra-neon);
 }
 
-.nav-links { 
-    display: flex; 
-    list-style: none; 
-    gap: 20px; 
-    align-items: center; 
+.nav-links { display: flex; gap: 40px; align-items: center; list-style: none; }
+.nav-links a {
+    color: var(--texto-cinza);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-decoration: none;
+    transition: var(--transicao);
+    position: relative;
+    padding: 5px 0;
 }
-
-.nav-links a { 
-    color: var(--branco); 
-    text-decoration: none; 
-    font-size: 13px; 
-    font-weight: 400;
-    transition: 0.3s; 
+.nav-links a::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 0%; height: 2px; background: var(--dourado);
+    transition: var(--transicao); box-shadow: 0 0 10px var(--dourado);
 }
-
-.nav-links a:hover { color: var(--dourado); }
+.nav-links a:hover { color: var(--branco); }
+.nav-links a:hover::after { width: 100%; }
 
 .btn-agendar-topo {
-    background: var(--dourado);
-    color: #000 !important;
-    padding: 8px 18px;
-    border-radius: 4px;
-    font-weight: 700;
-    transition: 0.3s;
+    background: rgba(212, 175, 55, 0.05);
+    color: var(--dourado) !important;
+    border: 1px solid var(--dourado);
+    padding: 10px 30px;
+    border-radius: 50px;
+    box-shadow: inset 0 0 10px rgba(212, 175, 55, 0);
+    transition: var(--transicao);
 }
-
 .btn-agendar-topo:hover {
-    background: var(--branco);
-    transform: scale(1.05);
+    background: var(--dourado); color: var(--bg-fundo) !important;
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
 }
+.btn-agendar-topo::after { display: none; }
+.menu-toggle { display: none; color: var(--dourado); font-size: 2rem; }
 
-/* Hero Section */
+/* ==========================================================================
+   2. HERO E TEXTOS (INDEX)
+   ========================================================================== */
 .hero {
     height: 100vh;
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
-                url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; justify-content: center; align-items: center;
     text-align: center;
+    background: radial-gradient(circle at center, rgba(3,3,3,0.2) 0%, rgba(3,3,3,1) 100%), 
+                url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2000&auto=format&fit=crop') center/cover;
+    background-attachment: fixed; 
+    position: relative;
 }
+.hero::after {
+    content: ''; position: absolute; bottom: 0; width: 100%; height: 150px;
+    background: linear-gradient(to top, var(--bg-fundo), transparent);
+}
+.hero-content { z-index: 2; animation: slideUpFade 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-.hero-content h1 { 
-    font-size: 3.5rem; 
-    color: var(--dourado); 
-    margin-bottom: 15px;
+.hero-content h1 {
+    font-size: clamp(3rem, 6vw, 6rem); /* Texto GIGANTE e perfeito */
+    margin-bottom: 20px;
     text-transform: uppercase;
-}
-
-.hero-content p {
-    font-size: 1.2rem;
-    color: var(--branco);
-    opacity: 0.9;
+    letter-spacing: 5px;
+    line-height: 1.1;
+    background: linear-gradient(to right, var(--branco) 20%, var(--dourado) 50%, var(--branco) 80%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    animation: shimmerCard 6s linear infinite;
 }
 
 .btn-principal {
     display: inline-block;
-    margin-top: 30px;
-    padding: 15px 40px;
-    background: var(--dourado);
+    padding: 22px 55px;
+    background: linear-gradient(135deg, var(--dourado) 0%, #ffe082 100%);
     color: #000;
     text-decoration: none;
-    font-weight: bold;
-    border-radius: 5px;
-    transition: 0.4s;
-}
-
-.btn-principal:hover {
-    background: var(--branco);
-    transform: translateY(-3px);
-}
-
-/* Seções Gerais */
-section {
-    padding: 100px 5%;
-    text-align: center;
-}
-
-.titulo-secao { 
-    font-size: 2.5rem; 
-    color: var(--dourado); 
-    margin-bottom: 50px; 
-    text-transform: uppercase; 
-    position: relative;
-    display: inline-block;
-}
-
-.titulo-secao::after {
-    content: '';
-    width: 50px;
-    height: 3px;
-    background: var(--dourado);
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-/* Grid de Cards (Serviços e Produtos) */
-.cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.card-item {
-    background: var(--cinza-card);
-    padding: 40px;
-    border-radius: 15px;
-    border: 1px solid #222;
-    transition: 0.4s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.card-item:hover { 
-    border-color: var(--dourado); 
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1);
-}
-
-.card-item img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-.preco-tag { 
-    display: block; 
-    margin-top: 20px; 
-    font-size: 1.8rem; 
-    color: var(--dourado); 
-    font-weight: 700; 
-}
-
-/* Formulários (Agendamento e Login) */
-.container-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 120px 20px;
-}
-
-.form-box {
-    background: var(--cinza-card);
-    padding: 50px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 450px;
-    border: 1px solid #333;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-}
-
-.form-box h2 { text-align: center; color: var(--dourado); margin-bottom: 30px; }
-
-.campo { display: flex; flex-direction: column; margin-bottom: 20px; }
-
-.campo label { color: var(--dourado); margin-bottom: 8px; font-size: 14px; font-weight: 600; }
-
-.campo input, .campo select {
-    padding: 12px;
-    background: #1e1e1e;
-    border: 1px solid #444;
-    color: #fff;
-    border-radius: 6px;
-    outline: none;
-    transition: 0.3s;
-}
-
-.campo input:focus { border-color: var(--dourado); }
-
-.btn-confirmar {
-    width: 100%;
-    padding: 15px;
-    background: var(--dourado);
-    border: none;
-    color: #000;
     font-weight: 800;
-    cursor: pointer;
-    border-radius: 6px;
+    border-radius: 50px;
+    font-size: 1.2rem;
     text-transform: uppercase;
-    transition: 0.3s;
+    letter-spacing: 3px;
+    transition: var(--transicao);
+    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+    position: relative; overflow: hidden;
+}
+.btn-principal::before {
+    content: ''; position: absolute; top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+    transform: skewX(-25deg); transition: 0.7s;
+}
+.btn-principal:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 50px rgba(212, 175, 55, 0.6); }
+.btn-principal:hover::before { left: 200%; }
+
+/* ==========================================================================
+   3. FORMULÁRIOS OMNI (LOGIN, AGENDAMENTO) E INPUTS
+   ========================================================================== */
+.container-form {
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 150px 20px 80px;
+}
+.form-box {
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: var(--vidro-blur);
+    -webkit-backdrop-filter: var(--vidro-blur);
+    padding: 60px;
+    border-radius: 24px;
+    width: 100%; max-width: 600px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 40px 100px rgba(0,0,0,1), inset 0 0 0 1px rgba(212, 175, 55, 0.1);
+    animation: slideUpFade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.btn-confirmar:hover { background: var(--branco); }
-
-/* Grade de Horários */
-.grade-horarios {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 10px;
+.form-box h2 {
+    text-align: center; color: var(--dourado); margin-bottom: 40px;
+    text-transform: uppercase; letter-spacing: 3px; font-size: 2rem;
 }
 
+.campo { margin-bottom: 25px; position: relative; }
+.campo label {
+    display: block; margin-bottom: 10px; color: var(--texto-cinza);
+    font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;
+}
+
+/* Campos de Texto Avançados */
+.campo input, .campo select {
+    width: 100%; padding: 22px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px; color: var(--branco);
+    font-size: 1.1rem; outline: none; transition: var(--transicao);
+}
+.campo input:focus, .campo select:focus {
+    border-color: var(--dourado); background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.15), inset 0 0 10px rgba(212, 175, 55, 0.05);
+    transform: translateY(-2px);
+}
+.campo select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat; background-position: right 20px center; cursor: pointer;
+}
+.campo select option { background: #111; color: #fff; }
+
+/* Botões de Horário (Time Slots tipo App Nativo) */
+.grade-horarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
 .btn-horario {
-    padding: 12px;
-    background: #252525;
-    border: 1px solid #333;
-    color: white;
-    cursor: pointer;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: 0.2s;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--texto-cinza);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 18px; border-radius: 12px; cursor: pointer;
+    transition: var(--transicao); font-weight: 600; font-size: 1.1rem;
+}
+.btn-horario:hover { border-color: var(--dourado); color: var(--dourado); transform: scale(1.05); }
+
+/* ==========================================================================
+   4. PAINEL ADMIN E PERFIL (DASHBOARDS FINTECH E TICKETS)
+   ========================================================================== */
+/* Dashboard Topo (Resumo) */
+#resumo-painel {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 50px;
+}
+#resumo-painel div {
+    background: linear-gradient(145deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.9) 100%);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 30px; border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    position: relative; overflow: hidden;
+    animation: slideUpFade 0.8s ease forwards;
+}
+#resumo-painel div::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%);
+}
+#resumo-painel h2 { font-size: 2.8rem; text-shadow: 0 0 20px rgba(255,255,255,0.1); margin-top: 10px; }
+#faturamento-hoje { color: var(--sucesso) !important; text-shadow: 0 0 20px rgba(0, 230, 118, 0.4) !important; }
+
+/* Cartões de Agendamentos (Admin e Perfil) */
+#lista-agendamentos > div, #meus-agendamentos > .card-item {
+    background: rgba(15, 15, 15, 0.6) !important;
+    backdrop-filter: var(--vidro-blur);
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-left: 6px solid var(--dourado) !important;
+    border-radius: 16px !important;
+    padding: 30px !important;
+    transition: var(--transicao);
+    animation: slideUpFade 0.6s ease forwards;
+}
+#lista-agendamentos > div:hover, #meus-agendamentos > .card-item:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.3) !important;
 }
 
-.btn-horario:hover { border-color: var(--dourado); }
+/* Botões dentro do Painel Admin */
+#lista-agendamentos button, #lista-agendamentos a {
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 800 !important;
+    border-radius: 8px !important; transition: var(--transicao); border: none !important;
+}
+#lista-agendamentos a { background: rgba(0, 230, 118, 0.1) !important; color: var(--sucesso) !important; border: 1px solid var(--sucesso) !important; }
+#lista-agendamentos a:hover { background: var(--sucesso) !important; color: #000 !important; box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
+#lista-agendamentos button { background: rgba(255, 23, 68, 0.1) !important; color: var(--perigo) !important; border: 1px solid var(--perigo) !important; }
+#lista-agendamentos button:hover { background: var(--perigo) !important; color: #fff !important; box-shadow: 0 0 20px rgba(255, 23, 68, 0.4); }
 
-.btn-horario.selecionado { 
-    background: var(--dourado); 
-    color: black; 
-    font-weight: 700; 
-    border-color: var(--dourado);
+/* ==========================================================================
+   5. PRODUTOS & SERVIÇOS (VITRINES)
+   ========================================================================== */
+section { padding: 140px 5%; text-align: center; }
+.titulo-secao {
+    font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 80px; text-transform: uppercase;
+    letter-spacing: 4px; background: linear-gradient(to right, var(--branco), var(--dourado));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
-/* FAQ */
-.secao-faq { background: var(--preto-abs); }
-
-.faq-container {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: left;
+.cards-container { display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; }
+.card-item {
+    background: rgba(15, 15, 15, 0.5);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--borda);
+    padding: 30px; border-radius: 24px;
+    width: 360px; text-align: center;
+    transition: var(--transicao); position: relative; overflow: hidden;
+}
+.card-item::after {
+    content: ''; position: absolute; top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+    transform: skewX(-25deg); transition: 0.8s ease; z-index: 1; pointer-events: none;
+}
+.card-item:hover {
+    transform: translateY(-15px); border-color: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 30px rgba(212, 175, 55, 0.1);
+}
+.card-item:hover::after { left: 200%; }
+.card-item img {
+    width: 100%; height: 280px; object-fit: cover; border-radius: 16px;
+    margin-bottom: 25px; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; position: relative;
+}
+.card-item:hover img { transform: scale(1.1); }
+.card-item h3 { color: var(--branco); font-size: 1.8rem; transition: var(--transicao); position: relative; z-index: 2; }
+.card-item:hover h3 { color: var(--dourado); }
+.preco-tag {
+    display: inline-block; color: var(--dourado); font-weight: 800; font-size: 1.6rem;
+    background: rgba(212, 175, 55, 0.05); padding: 12px 30px; border-radius: 50px; border: 1px solid rgba(212, 175, 55, 0.2); position: relative; z-index: 2;
 }
 
-.faq-item {
-    background: var(--cinza-card);
-    margin-bottom: 20px;
-    padding: 25px;
-    border-radius: 10px;
-    border-left: 4px solid var(--dourado);
+/* ==========================================================================
+   6. CARRINHO MODAL (O EFEITO SLIDE-DOWN PREMIUM)
+   ========================================================================== */
+#modal-carrinho { background: rgba(0,0,0,0.85); backdrop-filter: var(--vidro-blur); }
+#modal-carrinho .form-box {
+    margin: 80px auto; max-width: 600px;
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.cart-icon {
+    position: fixed; bottom: 40px; right: 40px;
+    background: linear-gradient(135deg, var(--dourado) 0%, #ffe082 100%);
+    color: #000; padding: 25px; border-radius: 50%;
+    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.5);
+    z-index: 1001; font-size: 2rem; transition: var(--transicao);
+    animation: pulseNeon 3s infinite;
+}
+.cart-icon:hover { transform: scale(1.15) translateY(-10px); animation: none; }
+.cart-count {
+    background: var(--perigo); color: white; border-radius: 50%;
+    padding: 6px 14px; font-size: 15px; font-weight: 900;
+    position: absolute; top: -5px; right: -5px; border: 4px solid var(--bg-fundo);
 }
 
-.faq-item h3 { color: var(--dourado); font-size: 1.1rem; margin-bottom: 10px; }
-
-.faq-item p { color: var(--cinza-texto); line-height: 1.6; }
-
-/* LGPD Footer */
+/* ==========================================================================
+   7. RODAPÉ 
+   ========================================================================== */
 .footer {
-    padding: 60px 5% 30px;
-    text-align: center;
-    background: #050505;
-    border-top: 1px solid #111;
+    text-align: center; padding: 100px 20px; background: #020202;
+    border-top: 1px solid rgba(255,255,255,0.02);
+}
+.lgpd-info a { color: var(--dourado); text-decoration: none; border-bottom: 1px dashed var(--dourado); transition: var(--transicao); }
+.lgpd-info a:hover { color: var(--branco); border-color: var(--branco); }
+
+/* ==========================================================================
+   8. RESPONSIVIDADE (MOBILE APP FEEL)
+   ========================================================================== */
+@media (max-width: 992px) {
+    .form-box { padding: 40px; }
 }
 
-.lgpd-info {
-    max-width: 800px;
-    margin: 0 auto 30px;
-    font-size: 0.85rem;
-    color: #555;
-    line-height: 1.5;
-}
-
-.lgpd-info a { color: var(--dourado); text-decoration: none; }
-
-.copyright {
-    color: #333;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-}
-
-/* Responsividade */
 @media (max-width: 768px) {
-    .hero-content h1 { font-size: 2.2rem; }
-    .navbar { padding: 15px 3%; }
-    .nav-links { display: none; } /* Idealmente aqui entraria um menu Hamburguer */
-    .form-box { padding: 30px 20px; }
+    .navbar { padding: 20px; }
+    .menu-toggle { display: block; }
+    .nav-links {
+        display: none; flex-direction: column; width: 100%;
+        background-color: rgba(5, 5, 5, 0.98); backdrop-filter: blur(30px);
+        position: absolute; top: 75px; left: 0; padding: 40px 0;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    .nav-links.active { display: flex; animation: slideUpFade 0.4s ease; }
+    .nav-links li { margin: 20px 0; }
+    
+    .hero { background-attachment: scroll; }
+    .cards-container { flex-direction: column; align-items: center; }
+    .card-item { width: 100%; max-width: 100%; }
+    
+    .grade-horarios { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .cart-icon { bottom: 25px; right: 25px; padding: 20px; font-size: 1.6rem; }
 }

@@ -6,52 +6,114 @@
     <title>Produtos - Barbearia do Marquinhos</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        .cart-icon { position: fixed; bottom: 20px; right: 20px; background: var(--dourado); color: black; padding: 15px; border-radius: 50%; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 1001; }
+        .cart-count { background: red; color: white; border-radius: 50%; padding: 2px 7px; font-size: 12px; position: absolute; top: 0; right: 0; }
+        #modal-carrinho { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; overflow-y: auto; padding: 20px; }
+    </style>
 </head>
 <body>
-
     <nav class="navbar">
-        <div class="logo">BARBEARIA DO MARQUINHOS</div>
+        <div class="logo">PRODUTOS</div>
         <ul class="nav-links">
             <li><a href="index.html">Início</a></li>
             <li><a href="agendar.html">Agendar</a></li>
-            <li><a href="login.html" class="btn-agendar-topo">MINHA CONTA</a></li>
+            <li><a href="perfil.html">Meu Perfil</a></li>
         </ul>
     </nav>
 
-    <section class="secao-produtos" style="margin-top: 80px;">
+    <div class="cart-icon" onclick="abrirCarrinho()">
+        🛒 <span id="contagem-carrinho" class="cart-count">0</span>
+    </div>
+
+    <section class="secao-produtos" style="margin-top: 100px;">
         <h2 class="titulo-secao">Nossa Linha</h2>
-        <p style="color: #888; margin-bottom: 40px;">Produtos de alta performance para manter o visual em casa.</p>
-        
         <div class="cards-container">
             <div class="card-item">
-                <img src="https://images.unsplash.com/photo-1590159231310-749c957a0669?q=80&w=2000&auto=format&fit=crop" alt="Pomada Modeladora">
-                <h3>Pomada Matte Classic</h3>
-                <p>Fixação forte sem brilho para um visual natural.</p>
+                <img src="https://images.unsplash.com/photo-1590159231318-97bc16223461?q=80&w=2000" alt="Pomada">
+                <h3>Pomada Efeito Matte</h3>
+                <p>Fixação forte, brilho natural.</p>
                 <span class="preco-tag">R$ 45,00</span>
-                <a href="https://wa.me/55SEUTELEFONE?text=Tenho+interesse+na+Pomada+Matte" class="btn-confirmar" style="text-decoration: none; margin-top: 15px; display: block; text-align: center;">RESERVAR NO WHATSAPP</a>
+                <button onclick="adicionarAoCarrinho('Pomada Matte', 45.00)" class="btn-confirmar" style="margin-top:15px;">ADICIONAR AO CARRINHO</button>
             </div>
-
             <div class="card-item">
-                <img src="https://images.unsplash.com/photo-1626285861696-9f0bf5a49c6d?q=80&w=2000&auto=format&fit=crop" alt="Óleo para Barba">
-                <h3>Óleo Barba de Respeito</h3>
-                <p>Hidratação profunda e perfume amadeirado.</p>
+                <img src="https://images.unsplash.com/photo-1626285861696-9f0bf5a49c6d?q=80&w=2000" alt="Óleo">
+                <h3>Óleo de Barba</h3>
+                <p>Hidratação e perfume.</p>
                 <span class="preco-tag">R$ 35,00</span>
-                <a href="https://wa.me/55SEUTELEFONE?text=Tenho+interesse+no+Oleo+de+Barba" class="btn-confirmar" style="text-decoration: none; margin-top: 15px; display: block; text-align: center;">RESERVAR NO WHATSAPP</a>
-            </div>
-
-            <div class="card-item">
-                <img src="https://images.unsplash.com/photo-1597350304142-32a3962d3623?q=80&w=2000&auto=format&fit=crop" alt="Shampoo Barba">
-                <h3>Shampoo Detox 3 em 1</h3>
-                <p>Cabelo, barba e corpo limpos e refrescantes.</p>
-                <span class="preco-tag">R$ 55,00</span>
-                <a href="https://wa.me/55SEUTELEFONE?text=Tenho+interesse+no+Shampoo+Detox" class="btn-confirmar" style="text-decoration: none; margin-top: 15px; display: block; text-align: center;">RESERVAR NO WHATSAPP</a>
+                <button onclick="adicionarAoCarrinho('Óleo de Barba', 35.00)" class="btn-confirmar" style="margin-top:15px;">ADICIONAR AO CARRINHO</button>
             </div>
         </div>
     </section>
 
-    <footer class="footer">
-        <p>&copy; 2026 Barbearia do Marquinhos</p>
-    </footer>
+    <div id="modal-carrinho">
+        <div class="form-box" style="margin: 50px auto; max-width: 600px;">
+            <h2 style="color: var(--dourado);">Meu Carrinho</h2>
+            <div id="itens-carrinho"></div>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+            <h3 id="total-carrinho" style="text-align: right;">Total: R$ 0,00</h3>
+            <button onclick="finalizarCompra()" class="btn-confirmar" style="margin-top: 20px; background: #25d366;">PEDIR VIA WHATSAPP</button>
+            <button onclick="fecharCarrinho()" class="btn-principal" style="margin-top: 10px; width: 100%; background: #444;">Continuar Comprando</button>
+        </div>
+    </div>
 
+    <script>
+        let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+
+        function adicionarAoCarrinho(nome, preco) {
+            carrinho.push({nome, preco});
+            atualizarIcone();
+            alert(nome + " adicionado!");
+        }
+
+        function atualizarIcone() {
+            document.getElementById('contagem-carrinho').innerText = carrinho.length;
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+        }
+
+        function abrirCarrinho() {
+            document.getElementById('modal-carrinho').style.display = 'block';
+            renderizarCarrinho();
+        }
+
+        function fecharCarrinho() {
+            document.getElementById('modal-carrinho').style.display = 'none';
+        }
+
+        function renderizarCarrinho() {
+            const lista = document.getElementById('itens-carrinho');
+            let total = 0;
+            lista.innerHTML = "";
+            carrinho.forEach((item, index) => {
+                total += item.preco;
+                lista.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <span>${item.nome}</span>
+                        <span>R$ ${item.preco.toFixed(2)} <button onclick="removerItem(${index})" style="background:none; border:none; color:red; cursor:pointer;">(X)</button></span>
+                    </div>`;
+            });
+            document.getElementById('total-carrinho').innerText = `Total: R$ ${total.toFixed(2)}`;
+        }
+
+        function removerItem(index) {
+            carrinho.splice(index, 1);
+            atualizarIcone();
+            renderizarCarrinho();
+        }
+
+        function finalizarCompra() {
+            if(carrinho.length === 0) return alert("Carrinho vazio!");
+            let texto = "Olá! Gostaria de encomendar os seguintes produtos:%0A%0A";
+            let total = 0;
+            carrinho.forEach(item => {
+                texto += `- ${item.nome} (R$ ${item.preco.toFixed(2)})%0A`;
+                total += item.preco;
+            });
+            texto += `%0A*Total: R$ ${total.toFixed(2)}*`;
+            window.location.href = `https://wa.me/5561999999999?text=${texto}`;
+        }
+        
+        atualizarIcone();
+    </script>
 </body>
 </html>

@@ -1,15 +1,17 @@
-// CONFIGURAÇÃO FIREBASE (Usa a tua oficial)
+// CONFIGURAÇÃO FIREBASE 
 const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
+    apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
     authDomain: "barbearia-do-marcos.firebaseapp.com",
     databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
     projectId: "barbearia-do-marcos",
-    storageBucket: "barbearia-do-marcos.appspot.com",
+    storageBucket: "barbearia-do-marcos.firebasestorage.app",
     messagingSenderId: "894105389352",
-    appId: "1:894105389352:web:3a5a27602c0d589581e81d"
+    appId: "1:894105389352:web:3a5a27602c0d589581e81d",
+    measurementId: "G-53GKXL29Z9"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Evita erro de inicialização duplicada
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const auth = firebase.auth();
 const database = firebase.database();
 
@@ -45,7 +47,7 @@ function carregarMeusAgendamentos(email) {
                 <h3 style="color: var(--dourado)">${ag.data} às ${ag.horario}</h3>
                 <p><strong>Serviço:</strong> ${ag.servico}</p>
                 <p><strong>Barbeiro:</strong> ${ag.barbeiro}</p>
-                <p><strong>Status:</strong> <span style="color: ${ag.status === 'Pendente' ? 'orange' : 'green'}">${ag.status}</span></p>
+                <p><strong>Status:</strong> <span style="color: ${ag.status === 'Pendente' ? '#d4af37' : '#25d366'}">${ag.status}</span></p>
             `;
             container.appendChild(item);
         });
@@ -53,5 +55,7 @@ function carregarMeusAgendamentos(email) {
 }
 
 function logout() {
-    auth.signOut().then(() => window.location.href = "index.html");
+    auth.signOut().then(() => {
+        window.location.href = "index.html";
+    });
 }
