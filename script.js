@@ -72,16 +72,25 @@ window.fazerLogout = function() {
 };
 
 // ==========================================
-// MENU HAMBÚRGUER (MOBILE)
+// MENU HAMBÚRGUER (MOBILE) COM FECHAMENTO AUTOMÁTICO
 // ==========================================
 const menuToggle = document.getElementById('mobile-menu');
 const navLinks = document.querySelector('.nav-links');
+const itensDoMenu = document.querySelectorAll('.nav-links li a'); // Seleciona todos os links dentro do menu
 
 if (menuToggle) {
+    // Abre e fecha ao clicar nas 3 barrinhas
     menuToggle.addEventListener('click', () => {
         navLinks.classList.toggle('active'); 
     });
 }
+
+// Fecha o painel escuro quando o cliente clica em qualquer link
+itensDoMenu.forEach(link => {
+    link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+    });
+});
 
 // ==========================================
 // GERAÇÃO DOS HORÁRIOS (Para agendar.html)

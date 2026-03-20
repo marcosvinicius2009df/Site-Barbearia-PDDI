@@ -376,28 +376,99 @@ section { padding: 140px 5%; text-align: center; }
 .lgpd-info a:hover { color: var(--branco); border-color: var(--branco); }
 
 /* ==========================================================================
-   8. RESPONSIVIDADE (MOBILE APP FEEL)
+   8. RESPONSIVIDADE ULTRA MOBILE (APP FEELING)
    ========================================================================== */
-@media (max-width: 992px) {
-    .form-box { padding: 40px; }
-}
-
 @media (max-width: 768px) {
-    .navbar { padding: 20px; }
-    .menu-toggle { display: block; }
-    .nav-links {
-        display: none; flex-direction: column; width: 100%;
-        background-color: rgba(5, 5, 5, 0.98); backdrop-filter: blur(30px);
-        position: absolute; top: 75px; left: 0; padding: 40px 0;
-        border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    /* 1. Ajustes Gerais de Tela Móbile */
+    body {
+        padding-bottom: 80px; /* Espaço pro ícone do carrinho não cobrir nada */
     }
-    .nav-links.active { display: flex; animation: slideUpFade 0.4s ease; }
-    .nav-links li { margin: 20px 0; }
     
-    .hero { background-attachment: scroll; }
-    .cards-container { flex-direction: column; align-items: center; }
-    .card-item { width: 100%; max-width: 100%; }
+    .navbar { padding: 15px 20px; }
+    .logo { font-size: 1.2rem; }
     
-    .grade-horarios { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .cart-icon { bottom: 25px; right: 25px; padding: 20px; font-size: 1.6rem; }
+    /* 2. Menu Hambúrguer Tela Cheia */
+    .menu-toggle { display: block; z-index: 10001; }
+    .nav-links {
+        display: flex; 
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: -100vh; /* Escondido lá em cima */
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(5, 5, 5, 0.98); 
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        transition: top 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 10000;
+        border: none;
+        padding: 0;
+    }
+    .nav-links.active { top: 0; } /* Desce a tela inteira quando clica */
+    .nav-links li { margin: 25px 0; }
+    .nav-links a { font-size: 1.5rem; } /* Textos maiores para o dedo */
+    
+    /* 3. Ajuste de Textos e Espaços */
+    .hero { background-attachment: scroll; } /* Parallax desativado no mobile para não travar */
+    .hero-content h1 { font-size: 2.8rem; letter-spacing: 2px; }
+    .hero-content p { font-size: 1.1rem; padding: 0 10px; }
+    .btn-principal { padding: 18px 30px; font-size: 1rem; width: 100%; }
+    
+    /* 4. Cartões e Formulários ocupando 100% da largura útil */
+    section { padding: 100px 20px; }
+    .titulo-secao { font-size: 2.2rem; }
+    .cards-container { flex-direction: column; align-items: center; gap: 30px; }
+    .card-item { width: 100%; max-width: 100%; padding: 25px 20px; }
+    
+    .container-form { padding: 100px 15px 40px; }
+    .form-box { padding: 40px 25px; border-radius: 20px; }
+    .form-box h2 { font-size: 1.8rem; }
+    
+    /* 5. A Mágica contra o Zoom no iOS */
+    .campo input, .campo select {
+        font-size: 16px !important; /* OBRIGATÓRIO PARA O IPHONE NÃO DAR ZOOM */
+        padding: 18px 15px;
+    }
+    
+    /* 6. Horários mais fáceis de clicar (Touch Targets) */
+    .grade-horarios { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .btn-horario { padding: 18px 5px; font-size: 0.95rem; }
+    .btn-horario:active { transform: scale(0.95); background: var(--dourado); color: black; } /* Efeito de clique físico */
+    
+    /* 7. Carrinho Flutuante e Modal "Bottom Sheet" (Estilo iFood) */
+    .cart-icon { 
+        bottom: 20px; right: 20px; 
+        padding: 18px; font-size: 1.5rem; 
+        box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+    }
+    
+    #modal-carrinho {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: flex-end; /* Joga o modal pro final da tela */
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    #modal-carrinho.ativo {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    #modal-carrinho .form-box {
+        margin: 0;
+        max-width: 100%;
+        border-radius: 30px 30px 0 0; /* Arredondado só em cima */
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        padding-bottom: 50px; /* Espaço seguro do iPhone */
+    }
+    
+    #modal-carrinho.ativo .form-box {
+        transform: translateY(0);
+    }
 }

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <title>Produtos - Barbearia do Marquinhos</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
@@ -72,13 +72,19 @@
         }
 
         function abrirCarrinho() {
-            document.getElementById('modal-carrinho').style.display = 'block';
-            renderizarCarrinho();
-        }
+    const modal = document.getElementById('modal-carrinho');
+    modal.style.visibility = 'visible';
+    modal.classList.add('ativo');
+    renderizarCarrinho();
+}
 
-        function fecharCarrinho() {
-            document.getElementById('modal-carrinho').style.display = 'none';
-        }
+function fecharCarrinho() {
+    const modal = document.getElementById('modal-carrinho');
+    modal.classList.remove('ativo');
+    setTimeout(() => {
+        modal.style.visibility = 'hidden';
+    }, 400); // Espera a animação de descer terminar
+}
 
         function renderizarCarrinho() {
             const lista = document.getElementById('itens-carrinho');
