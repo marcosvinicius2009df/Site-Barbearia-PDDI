@@ -5,12 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <title>Agendar - Barbearia do Marquinhos</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+    <script>
+        // O SEGREDO DO BLOQUEIO: Se não estiver logado, expulsa para o login.
+        const firebaseConfig = {
+            apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
+            authDomain: "barbearia-do-marcos.firebaseapp.com",
+            databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
+            projectId: "barbearia-do-marcos",
+            storageBucket: "barbearia-do-marcos.firebasestorage.app",
+            messagingSenderId: "894105389352",
+            appId: "1:894105389352:web:3a5a27602c0d589581e81d",
+            measurementId: "G-53GKXL29Z9"
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        
+        firebase.auth().onAuthStateChanged(user => {
+            if (!user) {
+                alert("⚠️ Você precisa criar uma conta ou fazer login para agendar!");
+                window.location.href = "login.html";
+            }
+        });
+    </script>
 </head>
 <body>
 
@@ -18,6 +39,7 @@
         <div class="logo">AGENDAMENTO</div>
         <ul class="nav-links">
             <li><a href="index.html">Voltar ao Início</a></li>
+            <li><a href="perfil.html">Ver Meus Agendamentos</a></li>
         </ul>
     </nav>
 
@@ -26,12 +48,12 @@
             <h2>Reserve seu Horário</h2>
             <form id="form-agendamento">
                 <div class="campo">
-                    <label>Nome Completo:</label>
-                    <input type="text" id="nome" placeholder="Seu nome" required>
+                    <label>Seu Nome:</label>
+                    <input type="text" id="nome" placeholder="Digite seu nome" required>
                 </div>
                 <div class="campo">
                     <label>WhatsApp (com DDD):</label>
-                    <input type="text" id="whatsapp" placeholder="Ex: 98888761777" required>
+                    <input type="text" id="whatsapp" placeholder="Ex: 61988887777" required>
                 </div>
                 <div class="campo">
                     <label>Profissional:</label>
@@ -57,11 +79,24 @@
                     <div id="lista-horarios" class="grade-horarios">
                         </div>
                 </div>
-                <button type="submit" class="btn-confirmar">CONFIRMAR AGENDAMENTO</button>
+                <button type="submit" id="btn-submit-agendar" class="btn-confirmar">CONFIRMAR AGENDAMENTO</button>
             </form>
         </div>
     </div>
 
     <script src="script.js"></script>
+
+    <script>
+        // Trava o botão após o clique para não enviar 2 vezes
+        const formAgendamento = document.getElementById('form-agendamento');
+        if(formAgendamento) {
+            formAgendamento.addEventListener('submit', () => {
+                const btn = document.getElementById('btn-submit-agendar');
+                btn.innerText = "AGENDANDO...";
+                btn.style.opacity = "0.6";
+                btn.style.pointerEvents = "none";
+            });
+        }
+    </script>
 </body>
 </html>

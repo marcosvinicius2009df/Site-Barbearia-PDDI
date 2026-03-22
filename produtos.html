@@ -5,16 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <title>Produtos - Barbearia do Marquinhos</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        .cart-icon { position: fixed; bottom: 20px; right: 20px; background: var(--dourado); color: black; padding: 15px; border-radius: 50%; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 1001; }
-        .cart-count { background: red; color: white; border-radius: 50%; padding: 2px 7px; font-size: 12px; position: absolute; top: 0; right: 0; }
-        #modal-carrinho { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; overflow-y: auto; padding: 20px; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">PRODUTOS</div>
+        <div class="menu-toggle" id="mobile-menu">☰</div>
         <ul class="nav-links">
             <li><a href="index.html">Início</a></li>
             <li><a href="agendar.html">Agendar</a></li>
@@ -26,44 +25,84 @@
         🛒 <span id="contagem-carrinho" class="cart-count">0</span>
     </div>
 
-    <section class="secao-produtos" style="margin-top: 100px;">
+    <section class="secao-produtos" style="margin-top: 50px;">
         <h2 class="titulo-secao">Nossa Linha</h2>
-        <div class="cards-container">
-            <div class="card-item">
-                <img src="https://images.unsplash.com/photo-1590159231318-97bc16223461?q=80&w=2000" alt="Pomada">
-                <h3>Pomada Efeito Matte</h3>
-                <p>Fixação forte, brilho natural.</p>
-                <span class="preco-tag">R$ 45,00</span>
-                <button onclick="adicionarAoCarrinho('Pomada Matte', 45.00)" class="btn-confirmar" style="margin-top:15px;">ADICIONAR AO CARRINHO</button>
-            </div>
-            <div class="card-item">
-                <img src="https://images.unsplash.com/photo-1626285861696-9f0bf5a49c6d?q=80&w=2000" alt="Óleo">
-                <h3>Óleo de Barba</h3>
-                <p>Hidratação e perfume.</p>
-                <span class="preco-tag">R$ 35,00</span>
-                <button onclick="adicionarAoCarrinho('Óleo de Barba', 35.00)" class="btn-confirmar" style="margin-top:15px;">ADICIONAR AO CARRINHO</button>
-            </div>
+        
+        <div id="vitrine-produtos" class="cards-container">
+            <p style="color: var(--dourado); font-size: 1.2rem;">Carregando produtos da loja...</p>
         </div>
     </section>
 
     <div id="modal-carrinho">
-        <div class="form-box" style="margin: 50px auto; max-width: 600px;">
+        <div class="form-box">
             <h2 style="color: var(--dourado);">Meu Carrinho</h2>
             <div id="itens-carrinho"></div>
-            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-            <h3 id="total-carrinho" style="text-align: right;">Total: R$ 0,00</h3>
-            <button onclick="finalizarCompra()" class="btn-confirmar" style="margin-top: 20px; background: #25d366;">PEDIR VIA WHATSAPP</button>
-            <button onclick="fecharCarrinho()" class="btn-principal" style="margin-top: 10px; width: 100%; background: #444;">Continuar Comprando</button>
+            <hr style="border: 0; border-top: 1px solid var(--borda); margin: 20px 0;">
+            <h3 id="total-carrinho" style="text-align: right; color: white;">Total: R$ 0,00</h3>
+            <button onclick="finalizarCompra()" class="btn-confirmar" style="margin-top: 20px; background: linear-gradient(135deg, #00e676, #00bfa5); color: #000;">PEDIR VIA WHATSAPP</button>
+            <button onclick="fecharCarrinho()" class="btn-horario" style="margin-top: 15px; width: 100%;">Voltar para a Loja</button>
         </div>
     </div>
 
     <script>
+        // Menu Hambúrguer (Replicado para não bugar no mobile)
+        const menuToggle = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+        if (menuToggle) { menuToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); }); }
+        document.querySelectorAll('.nav-links li a').forEach(link => { link.addEventListener('click', () => { navLinks.classList.remove('active'); }); });
+
+        // INICIALIZANDO FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
+            authDomain: "barbearia-do-marcos.firebaseapp.com",
+            databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
+            projectId: "barbearia-do-marcos",
+            storageBucket: "barbearia-do-marcos.firebasestorage.app",
+            messagingSenderId: "894105389352",
+            appId: "1:894105389352:web:3a5a27602c0d589581e81d",
+            measurementId: "G-53GKXL29Z9"
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const database = firebase.database();
+
+        // 1. CARREGAR VITRINE DO FIREBASE
+        function carregarVitrine() {
+            const vitrine = document.getElementById('vitrine-produtos');
+
+            database.ref('produtos').on('value', snapshot => {
+                vitrine.innerHTML = ""; // Limpa o texto "Carregando"
+                const data = snapshot.val();
+
+                if(!data) {
+                    vitrine.innerHTML = "<p style='color: var(--texto-cinza); font-size: 1.2rem;'>Estoque esgotado no momento. Volte em breve!</p>";
+                    return;
+                }
+
+                // Cria o visual de cada produto igual ao Style que fizemos
+                snapshot.forEach(child => {
+                    const p = child.val();
+                    vitrine.innerHTML += `
+                        <div class="card-item">
+                            <img src="${p.imagem}" alt="${p.nome}">
+                            <h3>${p.nome}</h3>
+                            <p>${p.descricao}</p>
+                            <span class="preco-tag">R$ ${parseFloat(p.preco).toFixed(2).replace('.', ',')}</span>
+                            <button onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})" class="btn-confirmar" style="margin-top:20px; font-size: 1rem; padding: 15px;">+ ADICIONAR</button>
+                        </div>
+                    `;
+                });
+            });
+        }
+        
+        carregarVitrine(); // Roda a função quando a página abre
+
+        // 2. SISTEMA DO CARRINHO (IGUAL O ANTERIOR)
         let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
         function adicionarAoCarrinho(nome, preco) {
             carrinho.push({nome, preco});
             atualizarIcone();
-            alert(nome + " adicionado!");
+            alert("🛒 " + nome + " foi para o carrinho!");
         }
 
         function atualizarIcone() {
@@ -72,19 +111,17 @@
         }
 
         function abrirCarrinho() {
-    const modal = document.getElementById('modal-carrinho');
-    modal.style.visibility = 'visible';
-    modal.classList.add('ativo');
-    renderizarCarrinho();
-}
+            const modal = document.getElementById('modal-carrinho');
+            modal.style.visibility = 'visible';
+            modal.classList.add('ativo');
+            renderizarCarrinho();
+        }
 
-function fecharCarrinho() {
-    const modal = document.getElementById('modal-carrinho');
-    modal.classList.remove('ativo');
-    setTimeout(() => {
-        modal.style.visibility = 'hidden';
-    }, 400); // Espera a animação de descer terminar
-}
+        function fecharCarrinho() {
+            const modal = document.getElementById('modal-carrinho');
+            modal.classList.remove('ativo');
+            setTimeout(() => { modal.style.visibility = 'hidden'; }, 400); 
+        }
 
         function renderizarCarrinho() {
             const lista = document.getElementById('itens-carrinho');
@@ -93,9 +130,12 @@ function fecharCarrinho() {
             carrinho.forEach((item, index) => {
                 total += item.preco;
                 lista.innerHTML += `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <span>${item.nome}</span>
-                        <span>R$ ${item.preco.toFixed(2)} <button onclick="removerItem(${index})" style="background:none; border:none; color:red; cursor:pointer;">(X)</button></span>
+                    <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom:15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                        <span style="color: white; font-weight: 500;">${item.nome}</span>
+                        <span>
+                            <span style="color: var(--dourado); margin-right: 15px;">R$ ${item.preco.toFixed(2)}</span> 
+                            <button onclick="removerItem(${index})" style="background:#ff1744; border:none; color:white; padding: 5px 10px; border-radius: 6px; cursor:pointer;">X</button>
+                        </span>
                     </div>`;
             });
             document.getElementById('total-carrinho').innerText = `Total: R$ ${total.toFixed(2)}`;
