@@ -1,11 +1,11 @@
 /* ==========================================================================
-   BARBEARIA DO MARQUINHOS - OMNI-STYLES V.ULTIMATE (15x LEAP)
+   BARBEARIA DO MARQUINHOS - MASTER CSS V.FINAL (APPLE/TESLA DESIGN)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    /* Cores Ultra-Premium */
+    /* Cores Premium */
     --bg-fundo: #030303;       
     --bg-card: rgba(18, 18, 18, 0.6);        
     --bg-input: rgba(255, 255, 255, 0.03);       
@@ -13,12 +13,12 @@
     --dourado-hover: #e8c555;  
     --branco: #ffffff;
     --texto-cinza: #888888;
-    --borda: rgba(212, 175, 55, 0.1);
-    --sucesso: #00e676; /* Verde Neon para o Admin */
-    --perigo: #ff1744;  /* Vermelho Neon */
+    --borda: rgba(255, 255, 255, 0.08);
+    --sucesso: #00e676; 
+    --perigo: #ff1744;  
     
-    /* Variáveis de Transição e Efeitos */
-    --transicao: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Variáveis Globais */
+    --transicao: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     --vidro-blur: blur(25px);
     --sombra-neon: 0 0 20px rgba(212, 175, 55, 0.2);
 }
@@ -36,7 +36,7 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
-    /* Adiciona uma textura de grade ultra fina no fundo global */
+    /* Textura fina de grade no site todo */
     background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
     background-size: 50px 50px;
@@ -49,17 +49,11 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: var(--dourado); }
 
 /* ==========================================================================
-   ANIMAÇÕES AVANÇADAS (OMNI-ANIMATIONS)
+   1. ANIMAÇÕES
    ========================================================================== */
 @keyframes slideUpFade {
-    0% { opacity: 0; transform: translateY(50px) scale(0.95); }
+    0% { opacity: 0; transform: translateY(40px) scale(0.95); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes floatElement {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0px); }
 }
 
 @keyframes shimmerCard {
@@ -74,14 +68,14 @@ body {
 }
 
 /* ==========================================================================
-   1. NAVBAR - GLASSMORPHISM DINÂMICO
+   2. NAVBAR - VIDRO PURO
    ========================================================================== */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 5%;
-    background-color: rgba(3, 3, 3, 0.6);
+    background-color: rgba(3, 3, 3, 0.7);
     backdrop-filter: var(--vidro-blur);
     -webkit-backdrop-filter: var(--vidro-blur);
     border-bottom: 1px solid var(--borda); 
@@ -92,17 +86,18 @@ body {
 .logo {
     font-weight: 800;
     color: var(--branco);
-    font-size: clamp(1.2rem, 2vw, 1.8rem); /* Tipografia Fluida */
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
     letter-spacing: 4px;
     text-transform: uppercase;
     text-shadow: var(--sombra-neon);
 }
+.logo span { color: var(--dourado); }
 
 .nav-links { display: flex; gap: 40px; align-items: center; list-style: none; }
 .nav-links a {
     color: var(--texto-cinza);
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 2px;
     text-decoration: none;
@@ -124,19 +119,18 @@ body {
     border: 1px solid var(--dourado);
     padding: 10px 30px;
     border-radius: 50px;
-    box-shadow: inset 0 0 10px rgba(212, 175, 55, 0);
     transition: var(--transicao);
 }
 .btn-agendar-topo:hover {
     background: var(--dourado); color: var(--bg-fundo) !important;
-    box-shadow: 0 0 25px rgba(212, 175, 55, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
     transform: translateY(-2px);
 }
 .btn-agendar-topo::after { display: none; }
-.menu-toggle { display: none; color: var(--dourado); font-size: 2rem; }
+.menu-toggle { display: none; color: var(--dourado); font-size: 2rem; cursor: pointer; }
 
 /* ==========================================================================
-   2. HERO E TEXTOS (INDEX)
+   3. HERO (INÍCIO)
    ========================================================================== */
 .hero {
     height: 100vh;
@@ -151,10 +145,10 @@ body {
     content: ''; position: absolute; bottom: 0; width: 100%; height: 150px;
     background: linear-gradient(to top, var(--bg-fundo), transparent);
 }
-.hero-content { z-index: 2; animation: slideUpFade 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.hero-content { z-index: 2; animation: slideUpFade 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
 .hero-content h1 {
-    font-size: clamp(3rem, 6vw, 6rem); /* Texto GIGANTE e perfeito */
+    font-size: clamp(3rem, 6vw, 6rem); 
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 5px;
@@ -163,35 +157,33 @@ body {
     background-size: 200% auto;
     color: transparent;
     -webkit-background-clip: text;
+    background-clip: text;
     animation: shimmerCard 6s linear infinite;
 }
 
+.hero-content p {
+    font-size: 1.3rem; color: var(--texto-cinza); margin-bottom: 40px; font-weight: 300; letter-spacing: 1px;
+}
+
 .btn-principal {
-    display: inline-block;
-    padding: 22px 55px;
+    display: inline-block; padding: 22px 55px;
     background: linear-gradient(135deg, var(--dourado) 0%, #ffe082 100%);
-    color: #000;
-    text-decoration: none;
-    font-weight: 800;
-    border-radius: 50px;
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    transition: var(--transicao);
-    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+    color: #000; text-decoration: none; font-weight: 800;
+    border-radius: 50px; font-size: 1.2rem;
+    text-transform: uppercase; letter-spacing: 3px;
+    transition: var(--transicao); box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
     position: relative; overflow: hidden;
 }
 .btn-principal::before {
-    content: ''; position: absolute; top: 0; left: -100%;
-    width: 50%; height: 100%;
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
     background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
     transform: skewX(-25deg); transition: 0.7s;
 }
-.btn-principal:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 50px rgba(212, 175, 55, 0.6); }
+.btn-principal:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(212, 175, 55, 0.6); }
 .btn-principal:hover::before { left: 200%; }
 
 /* ==========================================================================
-   3. FORMULÁRIOS OMNI (LOGIN, AGENDAMENTO) E INPUTS
+   4. FORMULÁRIOS GERAIS (Agendar, Admin, Perfil)
    ========================================================================== */
 .container-form {
     display: flex; justify-content: center; align-items: center;
@@ -201,12 +193,11 @@ body {
     background: rgba(10, 10, 10, 0.6);
     backdrop-filter: var(--vidro-blur);
     -webkit-backdrop-filter: var(--vidro-blur);
-    padding: 60px;
-    border-radius: 24px;
-    width: 100%; max-width: 600px;
-    border: 1px solid rgba(255,255,255,0.05);
-    box-shadow: 0 40px 100px rgba(0,0,0,1), inset 0 0 0 1px rgba(212, 175, 55, 0.1);
-    animation: slideUpFade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    padding: 60px; border-radius: 24px;
+    width: 100%; max-width: 650px;
+    border: 1px solid var(--borda);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+    animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .form-box h2 {
@@ -214,25 +205,24 @@ body {
     text-transform: uppercase; letter-spacing: 3px; font-size: 2rem;
 }
 
-.campo { margin-bottom: 25px; position: relative; }
+.campo { margin-bottom: 25px; position: relative; text-align: left; }
 .campo label {
     display: block; margin-bottom: 10px; color: var(--texto-cinza);
     font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;
 }
 
-/* Campos de Texto Avançados */
 .campo input, .campo select {
-    width: 100%; padding: 22px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    width: 100%; padding: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--borda);
     border-radius: 12px; color: var(--branco);
     font-size: 1.1rem; outline: none; transition: var(--transicao);
 }
 .campo input:focus, .campo select:focus {
     border-color: var(--dourado); background: rgba(0, 0, 0, 0.8);
-    box-shadow: 0 0 25px rgba(212, 175, 55, 0.15), inset 0 0 10px rgba(212, 175, 55, 0.05);
-    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.15), inset 0 0 10px rgba(212, 175, 55, 0.05);
 }
+
 .campo select {
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -240,123 +230,153 @@ body {
 }
 .campo select option { background: #111; color: #fff; }
 
-/* Botões de Horário (Time Slots tipo App Nativo) */
 .grade-horarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
 .btn-horario {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.02); color: var(--texto-cinza);
+    border: 1px solid var(--borda); padding: 18px; border-radius: 12px;
+    cursor: pointer; transition: var(--transicao); font-weight: 600; font-size: 1rem;
+}
+.btn-horario:hover:not([disabled]) {
+    border-color: var(--dourado); color: var(--dourado); transform: translateY(-2px);
+}
+
+.btn-confirmar {
+    width: 100%; padding: 22px;
+    background: linear-gradient(135deg, var(--dourado) 0%, #ffe082 100%);
+    color: #000; border: none; border-radius: 12px;
+    font-size: 1.1rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 2px; cursor: pointer; transition: var(--transicao);
+    margin-top: 20px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+.btn-confirmar:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(212, 175, 55, 0.5); }
+
+
+/* ==========================================================================
+   5. TELA DE LOGIN (FIDELIDADE MÁXIMA AO FIGMA)
+   ========================================================================== */
+.login-bg {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Fundo escurecido e foto fixa na tela de login */
+    background: linear-gradient(to bottom, rgba(3, 3, 3, 0.6), rgba(3, 3, 3, 0.95)), 
+                url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
+    background-attachment: fixed;
+    z-index: 1;
+}
+
+/* Redefinimos o container para não quebrar a tela de login */
+.login-bg .container-form {
+    padding: 120px 20px 40px;
+    min-height: auto;
+    width: 100%;
+    background: transparent;
+}
+
+.login-box {
+    background: rgba(10, 10, 10, 0.75) !important; 
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    max-width: 450px !important;
+    margin: 0 auto;
+    padding: 50px 40px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.9) !important;
+}
+
+.login-box h2 {
+    color: var(--branco) !important;
+    text-transform: none !important;
+    letter-spacing: 0px !important;
+    font-size: 2.4rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 5px !important;
+    text-align: left !important;
+}
+
+.login-box .subtitle-auth {
     color: var(--texto-cinza);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 18px; border-radius: 12px; cursor: pointer;
-    transition: var(--transicao); font-weight: 600; font-size: 1.1rem;
+    font-size: 1rem;
+    margin-bottom: 40px;
+    text-align: left;
+    font-weight: 300;
 }
-.btn-horario:hover { border-color: var(--dourado); color: var(--dourado); transform: scale(1.05); }
+
+.login-box .campo label { text-align: left; font-size: 0.9rem; }
+.login-box .campo input {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important; 
+    padding: 18px 20px !important;
+}
+
+.login-box .btn-confirmar {
+    background: var(--dourado) !important; 
+    color: #000 !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    padding: 20px !important;
+    letter-spacing: 1px !important;
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3) !important;
+    width: 100%;
+}
+
+.login-box .btn-confirmar:hover { background: var(--dourado-hover) !important; }
+
 
 /* ==========================================================================
-   4. PAINEL ADMIN E PERFIL (DASHBOARDS FINTECH E TICKETS)
+   6. VITRINE (PRODUTOS) E CARDS
    ========================================================================== */
-/* Dashboard Topo (Resumo) */
-#resumo-painel {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 50px;
-}
-#resumo-painel div {
-    background: linear-gradient(145deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.9) 100%);
-    border: 1px solid rgba(255,255,255,0.05);
-    padding: 30px; border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    position: relative; overflow: hidden;
-    animation: slideUpFade 0.8s ease forwards;
-}
-#resumo-painel div::before {
-    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%);
-}
-#resumo-painel h2 { font-size: 2.8rem; text-shadow: 0 0 20px rgba(255,255,255,0.1); margin-top: 10px; }
-#faturamento-hoje { color: var(--sucesso) !important; text-shadow: 0 0 20px rgba(0, 230, 118, 0.4) !important; }
-
-/* Cartões de Agendamentos (Admin e Perfil) */
-#lista-agendamentos > div, #meus-agendamentos > .card-item {
-    background: rgba(15, 15, 15, 0.6) !important;
-    backdrop-filter: var(--vidro-blur);
-    border: 1px solid rgba(255,255,255,0.05) !important;
-    border-left: 6px solid var(--dourado) !important;
-    border-radius: 16px !important;
-    padding: 30px !important;
-    transition: var(--transicao);
-    animation: slideUpFade 0.6s ease forwards;
-}
-#lista-agendamentos > div:hover, #meus-agendamentos > .card-item:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.15);
-    border-color: rgba(212, 175, 55, 0.3) !important;
-}
-
-/* Botões dentro do Painel Admin */
-#lista-agendamentos button, #lista-agendamentos a {
-    text-transform: uppercase; letter-spacing: 1px; font-weight: 800 !important;
-    border-radius: 8px !important; transition: var(--transicao); border: none !important;
-}
-#lista-agendamentos a { background: rgba(0, 230, 118, 0.1) !important; color: var(--sucesso) !important; border: 1px solid var(--sucesso) !important; }
-#lista-agendamentos a:hover { background: var(--sucesso) !important; color: #000 !important; box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
-#lista-agendamentos button { background: rgba(255, 23, 68, 0.1) !important; color: var(--perigo) !important; border: 1px solid var(--perigo) !important; }
-#lista-agendamentos button:hover { background: var(--perigo) !important; color: #fff !important; box-shadow: 0 0 20px rgba(255, 23, 68, 0.4); }
-
-/* ==========================================================================
-   5. PRODUTOS & SERVIÇOS (VITRINES)
-   ========================================================================== */
-section { padding: 140px 5%; text-align: center; }
+section { padding: 120px 5%; text-align: center; }
 .titulo-secao {
     font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 80px; text-transform: uppercase;
     letter-spacing: 4px; background: linear-gradient(to right, var(--branco), var(--dourado));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
-.cards-container { display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; }
+.cards-container { 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px; /* Agrupados de forma limpa e próxima */
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
 .card-item {
-    background: rgba(15, 15, 15, 0.5);
-    backdrop-filter: blur(15px);
-    border: 1px solid var(--borda);
-    padding: 30px; border-radius: 24px;
-    width: 360px; text-align: center;
-    transition: var(--transicao); position: relative; overflow: hidden;
+    background: rgba(15, 15, 15, 0.8); 
+    backdrop-filter: var(--vidro-blur);
+    border: 1px solid var(--borda); 
+    padding: 20px; 
+    border-radius: 16px;
+    text-align: center; 
+    transition: var(--transicao); 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Garante que o botão/preço fique sempre no fundo, alinhado com os outros blocos */
 }
-.card-item::after {
-    content: ''; position: absolute; top: 0; left: -100%;
-    width: 50%; height: 100%;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
-    transform: skewX(-25deg); transition: 0.8s ease; z-index: 1; pointer-events: none;
-}
-.card-item:hover {
-    transform: translateY(-15px); border-color: rgba(212, 175, 55, 0.5);
-    box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 30px rgba(212, 175, 55, 0.1);
-}
-.card-item:hover::after { left: 200%; }
-.card-item img {
-    width: 100%; height: 280px; object-fit: cover; border-radius: 16px;
-    margin-bottom: 25px; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; position: relative;
-}
-.card-item:hover img { transform: scale(1.1); }
-.card-item h3 { color: var(--branco); font-size: 1.8rem; transition: var(--transicao); position: relative; z-index: 2; }
-.card-item:hover h3 { color: var(--dourado); }
-.preco-tag {
-    display: inline-block; color: var(--dourado); font-weight: 800; font-size: 1.6rem;
-    background: rgba(212, 175, 55, 0.05); padding: 12px 30px; border-radius: 50px; border: 1px solid rgba(212, 175, 55, 0.2); position: relative; z-index: 2;
+
+.card-item:hover { 
+    transform: translateY(-5px); 
+    border-color: rgba(212, 175, 55, 0.5); 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.9); 
 }
 
 /* ==========================================================================
-   6. CARRINHO MODAL (O EFEITO SLIDE-DOWN PREMIUM)
+   7. CARRINHO MODAL E ÍCONE
    ========================================================================== */
 #modal-carrinho { background: rgba(0,0,0,0.85); backdrop-filter: var(--vidro-blur); }
-#modal-carrinho .form-box {
-    margin: 80px auto; max-width: 600px;
-    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+#modal-carrinho .form-box { margin: 80px auto; max-width: 600px; animation: slideUpFade 0.6s forwards; }
 .cart-icon {
     position: fixed; bottom: 40px; right: 40px;
     background: linear-gradient(135deg, var(--dourado) 0%, #ffe082 100%);
     color: #000; padding: 25px; border-radius: 50%;
-    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.5);
-    z-index: 1001; font-size: 2rem; transition: var(--transicao);
-    animation: pulseNeon 3s infinite;
+    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.5); z-index: 1001; font-size: 2rem; transition: var(--transicao);
+    animation: pulseNeon 3s infinite; cursor: pointer;
 }
 .cart-icon:hover { transform: scale(1.15) translateY(-10px); animation: none; }
 .cart-count {
@@ -366,58 +386,63 @@ section { padding: 140px 5%; text-align: center; }
 }
 
 /* ==========================================================================
-   7. RODAPÉ 
+   8. ADMIN E DASHBOARD
    ========================================================================== */
-.footer {
-    text-align: center; padding: 100px 20px; background: #020202;
-    border-top: 1px solid rgba(255,255,255,0.02);
+#resumo-painel { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 50px; }
+#resumo-painel div {
+    background: linear-gradient(145deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.9) 100%);
+    border: 1px solid var(--borda); padding: 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
-.lgpd-info a { color: var(--dourado); text-decoration: none; border-bottom: 1px dashed var(--dourado); transition: var(--transicao); }
-.lgpd-info a:hover { color: var(--branco); border-color: var(--branco); }
+#resumo-painel h2 { font-size: 2.8rem; text-shadow: 0 0 20px rgba(255,255,255,0.1); margin-top: 10px; }
+#faturamento-hoje { color: var(--sucesso) !important; text-shadow: 0 0 20px rgba(0, 230, 118, 0.4) !important; }
 
 /* ==========================================================================
-   8. RESPONSIVIDADE ULTRA MOBILE (APP FEELING)
+   9. FAQ E RODAPÉ ULTRA-MINIMALISTA (ESTILO APPLE)
+   ========================================================================== */
+.secao-faq { padding: 120px 5%; background: var(--bg-fundo); }
+.faq-container { max-width: 700px; margin: 0 auto; }
+.faq-item {
+    background: transparent; border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 30px 0; border-radius: 0; transition: var(--transicao); text-align: left;
+}
+.faq-item:hover { border-bottom-color: var(--dourado); }
+.faq-item h3 { color: var(--branco); font-size: 1.4rem; font-weight: 400; letter-spacing: 1px; margin-bottom: 15px; }
+.faq-item p { color: var(--texto-cinza); font-size: 1rem; font-weight: 300; line-height: 1.8; }
+
+.footer {
+    background: #020202; padding: 100px 5% 40px; border-top: 1px solid rgba(255, 255, 255, 0.03); text-align: left;
+}
+.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 50px; max-width: 1000px; margin: 0 auto 80px; }
+.footer-logo { font-size: 1.4rem; font-weight: 700; color: var(--branco); letter-spacing: 4px; margin-bottom: 15px; }
+.footer-logo span { color: var(--dourado); }
+.footer-links h4 { color: var(--branco); margin-bottom: 20px; font-weight: 500; letter-spacing: 2px; font-size: 0.85rem; text-transform: uppercase; }
+.footer-links { display: flex; flex-direction: column; gap: 15px; }
+.footer-links a { color: var(--texto-cinza); text-decoration: none; font-size: 0.95rem; font-weight: 300; transition: var(--transicao); }
+.footer-links a:hover { color: var(--branco); padding-left: 5px; }
+.copyright { text-align: center; font-size: 0.85rem; color: rgba(255,255,255,0.3); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 30px; max-width: 1000px; margin: 0 auto; }
+
+/* ==========================================================================
+   10. RESPONSIVIDADE ULTRA MOBILE (APP FEELING)
    ========================================================================== */
 @media (max-width: 768px) {
-    /* 1. Ajustes Gerais de Tela Móbile */
-    body {
-        padding-bottom: 80px; /* Espaço pro ícone do carrinho não cobrir nada */
-    }
-    
+    body { padding-bottom: 80px; }
     .navbar { padding: 15px 20px; }
     .logo { font-size: 1.2rem; }
-    
-    /* 2. Menu Hambúrguer Tela Cheia */
     .menu-toggle { display: block; z-index: 10001; }
     .nav-links {
-        display: flex; 
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        top: -100vh; /* Escondido lá em cima */
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: rgba(5, 5, 5, 0.98); 
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        transition: top 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 10000;
-        border: none;
-        padding: 0;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        position: fixed; top: -100vh; left: 0; width: 100%; height: 100vh;
+        background-color: rgba(5, 5, 5, 0.98); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+        transition: top 0.5s; z-index: 10000; border: none; padding: 0;
     }
-    .nav-links.active { top: 0; } /* Desce a tela inteira quando clica */
+    .nav-links.active { top: 0; }
     .nav-links li { margin: 25px 0; }
-    .nav-links a { font-size: 1.5rem; } /* Textos maiores para o dedo */
+    .nav-links a { font-size: 1.5rem; }
     
-    /* 3. Ajuste de Textos e Espaços */
-    .hero { background-attachment: scroll; } /* Parallax desativado no mobile para não travar */
-    .hero-content h1 { font-size: 2.8rem; letter-spacing: 2px; }
-    .hero-content p { font-size: 1.1rem; padding: 0 10px; }
-    .btn-principal { padding: 18px 30px; font-size: 1rem; width: 100%; }
+    /* AQUI ESTÁ A CORREÇÃO MÁGICA PARA DESTRAVAR A TELA NO CELULAR */
+    .hero { background-attachment: scroll !important; } 
+    .login-bg { background-attachment: scroll !important; min-height: -webkit-fill-available; }
     
-    /* 4. Cartões e Formulários ocupando 100% da largura útil */
     section { padding: 100px 20px; }
     .titulo-secao { font-size: 2.2rem; }
     .cards-container { flex-direction: column; align-items: center; gap: 30px; }
@@ -427,209 +452,130 @@ section { padding: 140px 5%; text-align: center; }
     .form-box { padding: 40px 25px; border-radius: 20px; }
     .form-box h2 { font-size: 1.8rem; }
     
-    /* 5. A Mágica contra o Zoom no iOS */
-    .campo input, .campo select {
-        font-size: 16px !important; /* OBRIGATÓRIO PARA O IPHONE NÃO DAR ZOOM */
-        padding: 18px 15px;
-    }
+    .login-box { padding: 40px 25px !important; }
     
-    /* 6. Horários mais fáceis de clicar (Touch Targets) */
+    .campo input, .campo select { font-size: 16px !important; padding: 18px 15px; }
     .grade-horarios { grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .btn-horario { padding: 18px 5px; font-size: 0.95rem; }
-    .btn-horario:active { transform: scale(0.95); background: var(--dourado); color: black; } /* Efeito de clique físico */
+    .btn-horario:active { transform: scale(0.95); background: var(--dourado); color: black; }
     
-    /* 7. Carrinho Flutuante e Modal "Bottom Sheet" (Estilo iFood) */
-    .cart-icon { 
-        bottom: 20px; right: 20px; 
-        padding: 18px; font-size: 1.5rem; 
-        box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-    }
-    
+    .cart-icon { bottom: 20px; right: 20px; padding: 18px; font-size: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
     #modal-carrinho {
-        display: flex !important;
-        flex-direction: column;
-        justify-content: flex-end; /* Joga o modal pro final da tela */
-        visibility: hidden;
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        display: flex !important; flex-direction: column; justify-content: flex-end;
+        visibility: hidden; opacity: 0; transition: opacity 0.3s ease;
     }
-    
-    #modal-carrinho.ativo {
-        visibility: visible;
-        opacity: 1;
-    }
-
+    #modal-carrinho.ativo { visibility: visible; opacity: 1; }
     #modal-carrinho .form-box {
-        margin: 0;
-        max-width: 100%;
-        border-radius: 30px 30px 0 0; /* Arredondado só em cima */
-        transform: translateY(100%);
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        padding-bottom: 50px; /* Espaço seguro do iPhone */
+        margin: 0; max-width: 100%; border-radius: 30px 30px 0 0;
+        transform: translateY(100%); transition: transform 0.4s; padding-bottom: 50px;
     }
+    #modal-carrinho.ativo .form-box { transform: translateY(0); }
+}
+    .nav-links.active { top: 0; }
+    .nav-links li { margin: 25px 0; }
+    .nav-links a { font-size: 1.5rem; }
     
-    #modal-carrinho.ativo .form-box {
-        transform: translateY(0);
+    .hero { background-attachment: scroll; } 
+    .hero-content h1 { font-size: 2.8rem; letter-spacing: 2px; }
+    .btn-principal { padding: 18px 30px; font-size: 1rem; width: 100%; }
+    
+    section { padding: 100px 20px; }
+    .titulo-secao { font-size: 2.2rem; }
+    .cards-container { flex-direction: column; align-items: center; gap: 30px; }
+    .card-item { width: 100%; max-width: 100%; padding: 25px 20px; }
+    
+    .container-form { padding: 100px 15px 40px; }
+    .form-box { padding: 40px 25px; border-radius: 20px; }
+    .form-box h2 { font-size: 1.8rem; }
+    
+    .login-box { padding: 40px 25px !important; }
+    
+    .campo input, .campo select { font-size: 16px !important; padding: 18px 15px; }
+    .grade-horarios { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .btn-horario { padding: 18px 5px; font-size: 0.95rem; }
+    .btn-horario:active { transform: scale(0.95); background: var(--dourado); color: black; }
+    
+    .cart-icon { bottom: 20px; right: 20px; padding: 18px; font-size: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
+    #modal-carrinho {
+        display: flex !important; flex-direction: column; justify-content: flex-end;
+        visibility: hidden; opacity: 0; transition: opacity 0.3s ease;
     }
+    #modal-carrinho.ativo { visibility: visible; opacity: 1; }
+    #modal-carrinho .form-box {
+        margin: 0; max-width: 100%; border-radius: 30px 30px 0 0;
+        transform: translateY(100%); transition: transform 0.4s; padding-bottom: 50px;
+    }
+    #modal-carrinho.ativo .form-box { transform: translateY(0); }
 
-/* ==========================================================================
-   9. FAQ E RODAPÉ ULTRA-MINIMALISTA (ESTILO APPLE / LUXURY)
+    /* ==========================================================================
+   11. GALERIA DE ESTILOS (LOOKBOOK) E POP-UP
    ========================================================================== */
-.secao-faq {
-    padding: 120px 5%;
-    background: var(--bg-fundo);
-}
-
-.faq-container {
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-.faq-item {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Linha finíssima e elegante */
-    padding: 30px 0;
-    border-radius: 0;
-    transition: var(--transicao);
-    text-align: left;
-}
-
-.faq-item:hover {
-    border-bottom-color: var(--dourado); /* A linha brilha ao passar o mouse */
-}
-
-.faq-item h3 {
-    color: var(--branco);
-    font-size: 1.4rem;
-    font-weight: 400; /* Texto mais fino */
-    letter-spacing: 1px;
-    margin-bottom: 15px;
-}
-
-.faq-item p {
-    color: var(--texto-cinza);
-    font-size: 1rem;
-    font-weight: 300;
-    line-height: 1.8;
-}
-
-/* Rodapé Luxury Minimalista */
-.footer {
-    background: #020202;
-    padding: 100px 5% 40px;
-    border-top: 1px solid rgba(255, 255, 255, 0.03);
-    text-align: left;
-}
-
-.footer-grid {
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 50px; 
-    max-width: 1000px; 
-    margin: 0 auto 80px;
-}
-
-.footer-logo {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--branco);
-    letter-spacing: 4px;
-    margin-bottom: 15px;
-}
-
-.footer-logo span { color: var(--dourado); }
-
-.footer-links h4 {
-    color: var(--branco);
-    margin-bottom: 20px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-}
-
-.footer-links {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.footer-links a {
-    color: var(--texto-cinza);
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 300;
-    transition: var(--transicao);
-}
-
-.footer-links a:hover { color: var(--branco); padding-left: 5px; } /* Desliza levemente */
-
-.copyright {
-    text-align: center;
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.3);
-    letter-spacing: 1px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    padding-top: 30px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-/* Rodapé Luxury */
-.footer {
-    text-align: center;
-    padding: 80px 20px 40px;
-    background: radial-gradient(circle at bottom center, rgba(212, 175, 55, 0.05) 0%, #000000 70%);
-    border-top: 1px solid rgba(212, 175, 55, 0.1);
-    position: relative;
-}
-.footer-logo {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--branco);
-    letter-spacing: 3px;
-    margin-bottom: 20px;
-}
-.footer-logo span { color: var(--dourado); }
-.footer-links {
-    display: flex;
-    justify-content: center;
+.galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 25px;
-    margin-bottom: 40px;
-    flex-wrap: wrap;
-}
-.footer-links a {
-    color: var(--texto-cinza);
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-size: 0.85rem;
-    transition: var(--transicao);
-    font-weight: 600;
-}
-.footer-links a:hover { color: var(--dourado); text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
-.lgpd-info {
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.4);
-    max-width: 600px;
-    margin: 0 auto 30px auto;
-    line-height: 1.8;
-}
-.lgpd-info a {
-    color: var(--dourado);
-    text-decoration: none;
-    border-bottom: 1px dashed var(--dourado);
-    padding-bottom: 2px;
-}
-.copyright {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.3);
-    letter-spacing: 1px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    padding-top: 20px;
-    max-width: 800px;
-    margin: 0 auto;
+    margin-top: 50px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+.galeria-item {
+    position: relative;
+    border-radius: 16px;
+    height: 400px; /* Mantém a altura padrão para todos ficarem alinhados */
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--borda);
+    background: rgba(15, 15, 15, 0.8); /* Fundo elegante caso o flyer seja mais estreito */
+}
+
+.galeria-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* AQUI ESTÁ A MAGIA: Mostra o panfleto 100% sem cortar! */
+    transition: transform 0.8s ease;
+}
+
+.galeria-item:hover img {
+    transform: scale(1.1);
+}
+
+.galeria-overlay {
+    position: absolute;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    padding: 30px 20px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+    transition: bottom 0.4s ease;
+    text-align: left;
+}
+
+.galeria-item:hover .galeria-overlay {
+    bottom: 0;
+}
+
+.galeria-overlay h3 { color: var(--dourado); font-size: 1.2rem; margin-bottom: 5px; }
+.galeria-overlay p { color: var(--branco); font-size: 0.9rem; font-weight: 300; }
+
+/* Pop-up Elegante */
+#popup-aviso {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+    background: rgba(0,0,0,0.8); backdrop-filter: var(--vidro-blur); -webkit-backdrop-filter: var(--vidro-blur);
+    z-index: 100000; justify-content: center; align-items: center; padding: 20px;
+}
+
+.popup-box {
+    background: rgba(15, 15, 15, 0.9); border: 1px solid var(--dourado);
+    padding: 50px 40px; border-radius: 20px; text-align: center;
+    max-width: 450px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+    animation: slideUpFade 0.5s ease forwards;
+}
+
+.popup-close {
+    position: absolute; top: 15px; right: 20px; background: none; border: none;
+    color: var(--texto-cinza); font-size: 2rem; cursor: pointer; transition: 0.3s;
+}
+.popup-close:hover { color: var(--perigo); }
 }

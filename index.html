@@ -14,48 +14,38 @@
 <body>
 
     <nav class="navbar">
-        <div class="logo">BARBEARIA DO MARQUINHOS</div>
-        
+        <div class="logo">MARQUINHOS</div>
         <div class="menu-toggle" id="mobile-menu">☰</div>
-        
         <ul class="nav-links">
             <li><a href="#home">Início</a></li>
             <li><a href="#servicos">Serviços</a></li>
             <li><a href="produtos.html">🛒 Carrinho</a></li>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="agendar.html" class="btn-agendar-topo">AGENDAR AGORA</a></li>
-            
-            <li><a href="login.html" id="nav-conta">Minha Conta</a></li>
-            <li id="nav-logout" style="display: none;"><a href="#" onclick="fazerLogout()" style="color: #ff4d4d;">Sair</a></li>
+            <li><a href="login.html" id="nav-conta" style="background: var(--dourado); color: black; padding: 10px 20px; border-radius: 5px; font-weight: bold;">Minha Conta</a></li>
+            <li><button id="nav-logout" onclick="fazerLogout()" style="display: none; background: transparent; color: var(--dourado); border: 1px solid var(--dourado); padding: 8px 15px; border-radius: 5px; cursor: pointer;">Sair</button></li>
         </ul>
     </nav>
 
-    <header id="home" class="hero">
+    <section id="home" class="hero">
         <div class="hero-content">
-            <h1>O CORTE PERFEITO ESPERA POR VOCÊ</h1>
-            <p>Tradição, estilo e a melhor resenha da cidade.</p>
-            <a href="agendar.html" class="btn-principal">RESERVAR MINHA CADEIRA</a>
+            <h1>O Padrão Ouro em Barbearia</h1>
+            <p>Estilo, precisão e uma experiência premium para o homem moderno.</p>
+            <a href="agendar.html" class="btn-principal">RESERVE SEU HORÁRIO</a>
         </div>
-    </header>
+    </section>
 
-    <section id="servicos" class="secao-servicos">
+    <section id="servicos">
         <h2 class="titulo-secao">Nossos Serviços</h2>
-        <div class="cards-container">
-            <div class="card-item">
-                <h3>Corte Clássico</h3>
-                <p>Degradê, tesoura, finalização impecável.</p>
-                <span class="preco-tag">R$ 40,00</span>
-            </div>
-            <div class="card-item">
-                <h3>Barba Completa</h3>
-                <p>Toalha quente e alinhamento na navalha.</p>
-                <span class="preco-tag">R$ 30,00</span>
-            </div>
-            <div class="card-item">
-                <h3>Combo Imperial</h3>
-                <p>Cabelo + Barba + Lavagem especial.</p>
-                <span class="preco-tag">R$ 60,00</span>
-            </div>
+        <div id="dinamico-servicos" class="cards-container">
+            <p style="color: var(--dourado);">A carregar serviços...</p>
+        </div>
+    </section>
+
+    <section id="galeria" style="background: linear-gradient(to bottom, var(--bg-fundo), #050505); padding-top: 60px;">
+        <h2 class="titulo-secao">Lookbook</h2>
+        <p style="color: var(--texto-cinza); text-align: center; max-width: 600px; margin: -50px auto 40px; font-weight: 300;">Inspire-se nos trabalhos da nossa equipa. O padrão de excelência em cada detalhe.</p>
+        
+        <div id="dinamico-galeria" class="cards-container">
+            <p style="color: var(--dourado); text-align: center; width: 100%;">A carregar galeria...</p>
         </div>
     </section>
 
@@ -85,25 +75,65 @@
                     A excelência em cada detalhe. Elevando a tradição da barbearia a um padrão de luxo.
                 </p>
             </div>
-            
             <div class="footer-links">
-                <h4>Navegação</h4>
-                <a href="#home">Início</a>
-                <a href="#servicos">Nossos Serviços</a>
-                <a href="produtos.html">Loja Online</a>
+                <h4>Navegação</h4><a href="#home">Início</a><a href="#servicos">Nossos Serviços</a><a href="produtos.html">Loja Online</a>
             </div>
-            
             <div class="footer-links">
-                <h4>Atendimento</h4>
-                <a href="agendar.html">Agendar Horário</a>
-                <a href="login.html">Minha Conta</a>
-                <a href="admin.html">Acesso Restrito</a>
+                <h4>Atendimento</h4><a href="agendar.html">Agendar Horário</a><a href="login.html">Minha Conta</a><a href="admin.html">Acesso Restrito</a>
             </div>
         </div>
-        
         <p class="copyright">&copy; 2026 Barbearia do Marquinhos. Todos os direitos reservados.</p>
     </footer>
 
+    <script>
+        const firebaseConfigIndex = {
+            apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
+            authDomain: "barbearia-do-marcos.firebaseapp.com",
+            databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
+            projectId: "barbearia-do-marcos"
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfigIndex); }
+        const dbIndex = firebase.database();
+
+        // 1. CARREGAR SERVIÇOS E CORRIGIR TAMANHO DA IMAGEM
+        dbIndex.ref('servicos').on('value', snap => {
+            const container = document.getElementById('dinamico-servicos');
+            container.innerHTML = "";
+            if(!snap.exists()) { container.innerHTML = "<p style='color:var(--texto-cinza)'>Nenhum serviço cadastrado.</p>"; return; }
+            
+            snap.forEach(child => {
+                const s = child.val();
+                container.innerHTML += `
+                <div class="card-item">
+                    <img src="${s.imagem}" alt="${s.nome}" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3);">
+                    <div>
+                        <h3 style="color: var(--branco); font-size: 1.5rem; margin-bottom: 10px;">${s.nome}</h3>
+                        <p style="color: var(--texto-cinza); font-size: 0.95rem; margin-bottom: 20px;">${s.descricao}</p>
+                    </div>
+                    <span class="preco-tag">R$ ${parseFloat(s.preco).toFixed(2).replace('.', ',')}</span>
+                </div>`;
+            });
+        });
+
+        // 2. CARREGAR GALERIA (AGORA COM O MESMO DESIGN DOS SERVIÇOS)
+        dbIndex.ref('galeria').on('value', snap => {
+            const container = document.getElementById('dinamico-galeria');
+            container.innerHTML = "";
+            if(!snap.exists()) { container.innerHTML = "<p style='color:var(--texto-cinza)'>Nenhuma foto na galeria.</p>"; return; }
+
+            snap.forEach(child => {
+                const g = child.val();
+                container.innerHTML += `
+                <div class="card-item">
+                    <img src="${g.imagem}" alt="${g.titulo}" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3);">
+                    <div>
+                        <h3 style="color: var(--branco); font-size: 1.5rem; margin-bottom: 10px;">${g.titulo}</h3>
+                        <p style="color: var(--texto-cinza); font-size: 0.95rem; margin-bottom: 20px;">${g.descricao}</p>
+                    </div>
+                </div>`;
+            });
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

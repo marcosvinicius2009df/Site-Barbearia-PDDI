@@ -13,21 +13,17 @@
 
     <script>
         // O SEGREDO DO BLOQUEIO: Se não estiver logado, expulsa para o login.
-        const firebaseConfig = {
+        const firebaseConfigAgendar = {
             apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
             authDomain: "barbearia-do-marcos.firebaseapp.com",
             databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
-            projectId: "barbearia-do-marcos",
-            storageBucket: "barbearia-do-marcos.firebasestorage.app",
-            messagingSenderId: "894105389352",
-            appId: "1:894105389352:web:3a5a27602c0d589581e81d",
-            measurementId: "G-53GKXL29Z9"
+            projectId: "barbearia-do-marcos"
         };
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfigAgendar); }
         
         firebase.auth().onAuthStateChanged(user => {
             if (!user) {
-                alert("⚠️ Você precisa criar uma conta ou fazer login para agendar!");
+                alert("⚠️ Precisa de criar uma conta ou fazer login para agendar!");
                 window.location.href = "login.html";
             }
         });
@@ -45,26 +41,27 @@
 
     <div class="container-form">
         <div class="form-box">
-            <h2>Reserve seu Horário</h2>
+            <h2>Reserve o seu Horário</h2>
             <form id="form-agendamento">
                 <div class="campo">
                     <label>Seu Nome:</label>
-                    <input type="text" id="nome" placeholder="Digite seu nome" required>
+                    <input type="text" id="nome" placeholder="A carregar..." required>
                 </div>
                 <div class="campo">
                     <label>WhatsApp (com DDD):</label>
-                    <input type="text" id="whatsapp" placeholder="Ex: 61988887777" required>
+                    <input type="text" id="whatsapp" placeholder="A carregar..." required>
                 </div>
+                
                 <div class="campo">
                     <label>Profissional:</label>
-                    <select id="barbeiro">
-                        <option value="Marquinhos">Marquinhos</option>
-                        <option value="João">João</option>
+                    <select id="barbeiro" required>
+                        <option value="">A carregar equipa...</option>
                     </select>
                 </div>
+                
                 <div class="campo">
                     <label>Serviço:</label>
-                    <select id="servico">
+                    <select id="servico" required>
                         <option value="40.00">Corte Clássico - R$ 40,00</option>
                         <option value="30.00">Barba Completa - R$ 30,00</option>
                         <option value="60.00">Combo Imperial - R$ 60,00</option>
@@ -79,7 +76,27 @@
                     <div id="lista-horarios" class="grade-horarios">
                         </div>
                 </div>
+
+                <div id="box-lista-espera" style="text-align: center; margin: 10px 0 30px; padding: 15px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 12px;">
+                    <p style="color: var(--texto-cinza); font-size: 0.9rem; margin-bottom: 10px;">O dia está lotado ou não achou seu horário?</p>
+                    <button type="button" onclick="entrarListaEspera()" style="background: transparent; border: 1px solid var(--dourado); color: var(--dourado); padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='var(--dourado)'; this.style.color='black';" onmouseout="this.style.background='transparent'; this.style.color='var(--dourado)';">
+                        🔔 AVISAR-ME SE VAGAR
+                    </button>
+                </div>
+
+                <div style="background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(0,0,0,0.5)); border: 1px solid var(--dourado); padding: 15px; border-radius: 12px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; transition: var(--transicao);" id="caixa-upsell">
+                    <img src="https://images.unsplash.com/photo-1599305090598-fe179d501227?q=80&w=200&auto=format&fit=crop" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="flex: 1;">
+                        <h4 style="color: var(--dourado); margin-bottom: 2px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">🔥 Oferta Exclusiva</h4>
+                        <p style="color: var(--branco); font-size: 0.85rem; line-height: 1.4;">Levar Pomada Efeito Matte (+ R$ 45,00)</p>
+                    </div>
+                    <div style="position: relative;">
+                        <input type="checkbox" id="upsell-pomada" style="width: 25px; height: 25px; cursor: pointer; accent-color: var(--dourado);">
+                    </div>
+                </div>
+
                 <button type="submit" id="btn-submit-agendar" class="btn-confirmar">CONFIRMAR AGENDAMENTO</button>
+
             </form>
         </div>
     </div>
@@ -91,10 +108,12 @@
         const formAgendamento = document.getElementById('form-agendamento');
         if(formAgendamento) {
             formAgendamento.addEventListener('submit', () => {
-                const btn = document.getElementById('btn-submit-agendar');
-                btn.innerText = "AGENDANDO...";
-                btn.style.opacity = "0.6";
-                btn.style.pointerEvents = "none";
+                if(typeof horarioSelecionado !== 'undefined' && horarioSelecionado !== "") {
+                    const btn = document.getElementById('btn-submit-agendar');
+                    btn.innerText = "A AGENDAR...";
+                    btn.style.opacity = "0.6";
+                    btn.style.pointerEvents = "none";
+                }
             });
         }
     </script>

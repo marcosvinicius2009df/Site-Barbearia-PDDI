@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <title>Login - Barbearia do Marquinhos</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
@@ -14,41 +14,42 @@
 <body>
 
     <nav class="navbar">
-        <div class="logo">MINHA CONTA</div>
+        <div class="logo">MARQUINHOS</div>
         <ul class="nav-links">
             <li><a href="index.html">Voltar ao Início</a></li>
         </ul>
     </nav>
 
-    <div class="container-form">
-        <div class="form-box">
-            <h2 id="titulo-auth">Entrar na Conta</h2>
+    <div class="login-bg">
+        <div class="form-box login-box">
+            <h2 id="titulo-auth">Minha Conta</h2>
+            <p class="subtitle-auth">Entre ou cadastre-se para agendar.</p>
+            
             <form id="form-auth">
-                
                 <div id="campo-nome" class="campo" style="display: none;">
-                    <label>Nome Completo:</label>
-                    <input type="text" id="nome-cadastro" placeholder="Como gosta de ser chamado?">
+                    <label>Nome Completo</label>
+                    <input type="text" id="nome-cadastro" placeholder="Seu nome completo">
                 </div>
                 
                 <div id="campo-whatsapp" class="campo" style="display: none;">
-                    <label>WhatsApp (com DDD):</label>
-                    <input type="text" id="zap-cadastro" placeholder="Ex: 61988887777">
+                    <label>WhatsApp</label>
+                    <input type="text" id="zap-cadastro" placeholder="Ex: (61) 99999-9999">
                 </div>
 
                 <div class="campo">
-                    <label>E-mail:</label>
-                    <input type="email" id="email" placeholder="seu@email.com" required>
+                    <label>E-mail</label>
+                    <input type="email" id="email" placeholder="Seu e-mail" required>
                 </div>
                 <div class="campo">
-                    <label>Senha:</label>
-                    <input type="password" id="senha" placeholder="********" required>
+                    <label>Senha</label>
+                    <input type="password" id="senha" placeholder="Sua senha" required>
                 </div>
                 
                 <button type="submit" id="btn-auth" class="btn-confirmar">ENTRAR</button>
                 
-                <p style="margin-top: 20px; text-align: center; font-size: 14px; color: #888;">
+                <p style="margin-top: 35px; text-align: center; font-size: 0.95rem; color: var(--texto-cinza);">
                     <span id="trocar-texto">Ainda não tem conta?</span> 
-                    <a href="#" id="link-alternar" style="color: var(--dourado); text-decoration: none; font-weight: bold;">Cadastre-se</a>
+                    <a href="#" id="link-alternar" style="color: var(--branco); text-decoration: none; font-weight: 500; border-bottom: 1px solid var(--dourado); padding-bottom: 2px; margin-left: 5px;">Cadastre-se</a>
                 </p>
             </form>
         </div>

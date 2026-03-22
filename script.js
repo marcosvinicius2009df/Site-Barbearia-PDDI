@@ -1,22 +1,14 @@
 // ==========================================
 // 1. CONFIGURAÇÃO DO FIREBASE BLINDADA
 // ==========================================
-// Mudamos o nome da variável para não dar conflito com o agendar.html
 const configDoScript = {
     apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
     authDomain: "barbearia-do-marcos.firebaseapp.com",
     databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
-    projectId: "barbearia-do-marcos",
-    storageBucket: "barbearia-do-marcos.firebasestorage.app",
-    messagingSenderId: "894105389352",
-    appId: "1:894105389352:web:3a5a27602c0d589581e81d",
-    measurementId: "G-53GKXL29Z9"
+    projectId: "barbearia-do-marcos"
 };
 
-// Inicialização segura
-if (!firebase.apps.length) { 
-    firebase.initializeApp(configDoScript); 
-}
+if (!firebase.apps.length) { firebase.initializeApp(configDoScript); }
 const database = firebase.database();
 const auth = firebase.auth();
 
@@ -28,115 +20,106 @@ auth.onAuthStateChanged(user => {
     const navLogout = document.getElementById('nav-logout');
 
     if (user) {
-        // ---- O USUÁRIO ESTÁ LOGADO ----
         if (navConta) {
             navConta.innerText = "Meu Perfil";
             navConta.href = "perfil.html";
-            navConta.style.color = "var(--dourado)";
         }
-        if (navLogout) {
-            navLogout.style.display = "block";
-        }
+        if (navLogout) navLogout.style.display = "inline-block";
 
-        // Preenche os dados na página de agendamento automaticamente
         database.ref('clientes/' + user.uid).once('value').then(snapshot => {
-            const dadosCliente = snapshot.val();
-            if (dadosCliente) {
-                const campoNome = document.getElementById('nome');
-                const campoZap = document.getElementById('whatsapp');
-
-                if (campoNome && campoZap) {
-                    campoNome.value = dadosCliente.nome;
-                    campoZap.value = dadosCliente.whatsapp;
-                    campoNome.readOnly = true;
-                    campoZap.readOnly = true;
-                    campoNome.style.opacity = "0.7";
-                    campoZap.style.opacity = "0.7";
-                }
+            const dados = snapshot.val();
+            if (dados) {
+                const inputNome = document.getElementById('nome');
+                const inputZap = document.getElementById('whatsapp');
+                if (inputNome) { inputNome.value = dados.nome; inputNome.readOnly = true; }
+                if (inputZap) { inputZap.value = dados.whatsapp; inputZap.readOnly = true; }
             }
         });
     } else {
-        // ---- O USUÁRIO NÃO ESTÁ LOGADO ----
-        if (navConta) {
-            navConta.innerText = "Minha Conta";
-            navConta.href = "login.html";
-        }
-        if (navLogout) {
-            navLogout.style.display = "none";
-        }
+        if (navConta) { navConta.innerText = "Minha Conta"; navConta.href = "login.html"; }
+        if (navLogout) navLogout.style.display = "none";
     }
 });
 
-// Função para o botão "Sair" do menu
-window.fazerLogout = function() {
+function fazerLogout() {
     auth.signOut().then(() => {
-        window.location.reload(); 
-    });
-};
-
-// ==========================================
-// 3. MENU HAMBÚRGUER (MOBILE)
-// ==========================================
-const menuToggle = document.getElementById('mobile-menu');
-const navLinks = document.querySelector('.nav-links');
-const itensDoMenu = document.querySelectorAll('.nav-links li a'); 
-
-if (menuToggle) {
-    menuToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active'); 
+        window.location.href = "index.html";
+    }).catch(error => {
+        alert("Erro ao sair: " + error.message);
     });
 }
 
-// Fecha o painel escuro quando clica em algum link
-itensDoMenu.forEach(link => {
-    link.addEventListener('click', () => {
-        if(navLinks) navLinks.classList.remove('active');
-    });
-});
+// ==========================================
+// 3. MENU MOBILE RESPONSIVO
+// ==========================================
+const menuToggle = document.getElementById('mobile-menu');
+const navLinks = document.querySelector('.nav-links');
+if(menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); });
+}
 
 // ==========================================
-// 4. GERAÇÃO INTELIGENTE DE HORÁRIOS
+// 4. MOTOR INTELIGENTE (BARBEIROS E HORÁRIOS)
 // ==========================================
 const listaHorarios = document.getElementById('lista-horarios');
+const selectBarbeiro = document.getElementById('barbeiro');
+const inputData = document.getElementById('data');
 const horariosDisponiveis = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
 let horarioSelecionado = "";
+
+if (selectBarbeiro) {
+    database.ref('barbeiros').on('value', snap => {
+        selectBarbeiro.innerHTML = "";
+        if (!snap.exists()) {
+            selectBarbeiro.innerHTML = "<option value=''>Sem barbeiros disponíveis</option>";
+            return;
+        }
+        snap.forEach(child => {
+            const opt = document.createElement('option');
+            opt.value = child.val().nome;
+            opt.innerText = child.val().nome;
+            selectBarbeiro.appendChild(opt);
+        });
+        buscarHorariosOcupados();
+    });
+}
 
 function buscarHorariosOcupados() {
     if (!listaHorarios) return;
     
-    const dataEscolhida = document.getElementById('data')?.value;
-    const barbeiroEscolhido = document.getElementById('barbeiro')?.value;
+    const dataEscolhida = inputData?.value;
+    const barbeiroEscolhido = selectBarbeiro?.value;
 
-    // Pede para escolher a data primeiro
     if (!dataEscolhida) {
-        listaHorarios.innerHTML = "<p style='color: var(--dourado); grid-column: span 3; text-align: center; font-size: 0.9rem; padding: 15px 0;'>📅 Por favor, escolha uma data acima para ver os horários livres.</p>";
+        listaHorarios.innerHTML = "<p style='color: var(--dourado); grid-column: span 3; text-align: center; font-size: 0.9rem; padding: 15px 0;'>📅 Escolha uma data para ver os horários.</p>";
         return;
     }
 
-    listaHorarios.innerHTML = "<p style='color: var(--texto-cinza); grid-column: span 3; text-align: center;'>Consultando agenda...</p>";
+    listaHorarios.innerHTML = "<p style='color: var(--texto-cinza); grid-column: span 3; text-align: center;'>A verificar disponibilidade...</p>";
 
-    // Puxa do banco
-    database.ref('agendamentos').once('value').then(snapshot => {
-        const agendamentos = snapshot.val();
-        let horariosOcupados = [];
-
-        if (agendamentos) {
-            Object.values(agendamentos).forEach(ag => {
-                if (ag.data === dataEscolhida && ag.barbeiro === barbeiroEscolhido) {
-                    horariosOcupados.push(ag.horario);
-                }
-            });
+    database.ref('bloqueios').orderByChild('data').equalTo(dataEscolhida).once('value').then(snapBloqueio => {
+        if (snapBloqueio.exists()) {
+            listaHorarios.innerHTML = "<p style='color: var(--perigo); grid-column: span 3; text-align: center; font-weight: bold;'>❌ Estabelecimento Fechado neste dia.</p>";
+            return;
         }
-        
-        renderizarHorarios(horariosOcupados);
-    }).catch(error => {
-        console.error("Erro na busca: ", error);
-        renderizarHorarios([]); 
+
+        database.ref('agendamentos').once('value').then(snapshot => {
+            const agendamentos = snapshot.val();
+            let horariosOcupados = [];
+
+            if (agendamentos) {
+                Object.values(agendamentos).forEach(ag => {
+                    if (ag.data === dataEscolhida && ag.barbeiro === barbeiroEscolhido) {
+                        horariosOcupados.push(ag.horario);
+                    }
+                });
+            }
+            renderizarHorarios(horariosOcupados);
+        });
     });
 }
 
 function renderizarHorarios(horariosOcupados = []) {
-    if (!listaHorarios) return;
     listaHorarios.innerHTML = "";
     horarioSelecionado = ""; 
 
@@ -146,16 +129,11 @@ function renderizarHorarios(horariosOcupados = []) {
         btn.className = "btn-horario";
         
         if (horariosOcupados.includes(hora)) {
-            // BLOQUEADO
             btn.innerText = hora + " (Ocupado)";
             btn.disabled = true;
             btn.style.opacity = "0.2";
             btn.style.cursor = "not-allowed";
-            btn.style.background = "transparent";
-            btn.style.borderColor = "rgba(255, 255, 255, 0.05)";
-            btn.style.color = "var(--texto-cinza)";
         } else {
-            // LIVRE
             btn.innerText = hora;
             btn.onclick = () => {
                 document.querySelectorAll('.btn-horario:not([disabled])').forEach(b => {
@@ -173,17 +151,11 @@ function renderizarHorarios(horariosOcupados = []) {
     });
 }
 
-// Ouve as mudanças de data e barbeiro
-const inputData = document.getElementById('data');
-const selectBarbeiro = document.getElementById('barbeiro');
-
 if (inputData) inputData.addEventListener('change', buscarHorariosOcupados);
 if (selectBarbeiro) selectBarbeiro.addEventListener('change', buscarHorariosOcupados);
 
-if (listaHorarios) buscarHorariosOcupados();
-
 // ==========================================
-// 5. ENVIO DO AGENDAMENTO
+// 5. ENVIO DO AGENDAMENTO (COM UPSELL)
 // ==========================================
 const formAgendamento = document.getElementById('form-agendamento');
 if (formAgendamento) {
@@ -192,22 +164,22 @@ if (formAgendamento) {
 
         if (!horarioSelecionado) {
             alert("⚠️ Por favor, escolha um horário.");
-            // Reativa o botão se ele não escolheu o horário
             const btn = document.getElementById('btn-submit-agendar');
-            if(btn) {
-                btn.innerText = "CONFIRMAR AGENDAMENTO";
-                btn.style.opacity = "1";
-                btn.style.pointerEvents = "auto";
-            }
+            if(btn) { btn.innerText = "CONFIRMAR AGENDAMENTO"; btn.style.opacity = "1"; btn.style.pointerEvents = "auto"; }
             return;
         }
 
         const nome = document.getElementById('nome').value;
         const whatsapp = document.getElementById('whatsapp').value;
         const servicoSelect = document.getElementById('servico');
-        const servicoTexto = servicoSelect.options[servicoSelect.selectedIndex].text;
+        let servicoTexto = servicoSelect.options[servicoSelect.selectedIndex].text;
         const dataCorte = document.getElementById('data').value;
         const barbeiro = document.getElementById('barbeiro').value;
+
+        const upsellPomada = document.getElementById('upsell-pomada');
+        if(upsellPomada && upsellPomada.checked) {
+            servicoTexto += " + 📦 Pomada Matte (R$ 45,00)";
+        }
 
         let numLimpo = whatsapp.replace(/\D/g, "");
         if (numLimpo.length === 11) { numLimpo = "55" + numLimpo; }
@@ -223,24 +195,45 @@ if (formAgendamento) {
             timestamp: Date.now()
         };
 
-        if (auth.currentUser) {
-            novoAgendamento.cliente_email = auth.currentUser.email;
-        }
+        if (auth.currentUser) { novoAgendamento.cliente_email = auth.currentUser.email; }
 
         database.ref('agendamentos').push(novoAgendamento)
             .then(() => {
-                const msg = `✅ *AGENDAMENTO CONFIRMADO!*%0A%0AOlá *${nome}*, seu horário na *Barbearia do Marquinhos* foi reservado.%0A%0A✂️ *Serviço:* ${servicoTexto}%0A📅 *Data:* ${dataCorte}%0A⏰ *Hora:* ${horarioSelecionado}%0A👤 *Barbeiro:* ${barbeiro}`;
+                const msg = `✅ *AGENDAMENTO CONFIRMADO!*%0A%0AOlá *${nome}*, o seu horário na *Barbearia do Marquinhos* foi reservado.%0A%0A✂️ *Serviço:* ${servicoTexto}%0A📅 *Data:* ${dataCorte.split('-').reverse().join('/')}%0A⏰ *Hora:* ${horarioSelecionado}%0A👤 *Barbeiro:* ${barbeiro}`;
                 const seuNumeroFixo = "5561999999999"; 
                 window.location.href = `https://api.whatsapp.com/send?phone=${seuNumeroFixo}&text=${msg}`;
             })
-            .catch(error => {
-                alert("Erro ao agendar: " + error.message);
-                const btn = document.getElementById('btn-submit-agendar');
-                if(btn) {
-                    btn.innerText = "CONFIRMAR AGENDAMENTO";
-                    btn.style.opacity = "1";
-                    btn.style.pointerEvents = "auto";
-                }
-            });
+            .catch(error => alert("Erro ao agendar: " + error.message));
     };
 }
+
+// ==========================================
+// 6. LISTA DE ESPERA E AVALIAÇÕES (FASE 3)
+// ==========================================
+window.entrarListaEspera = function() {
+    const nome = document.getElementById('nome')?.value;
+    const zap = document.getElementById('whatsapp')?.value;
+    const dataCorte = document.getElementById('data')?.value;
+
+    if(!nome || !zap || !dataCorte) {
+        return alert("⚠️ Por favor, escolha a data e veja se o seu nome e WhatsApp estão preenchidos acima.");
+    }
+
+    let numLimpo = zap.replace(/\D/g, "");
+    if (numLimpo.length === 11) { numLimpo = "55" + numLimpo; }
+
+    database.ref('lista_espera').push({
+        cliente: nome, whatsapp: numLimpo, data: dataCorte, timestamp: Date.now()
+    }).then(() => {
+        alert("✅ Entrou na Lista de Espera! Se vagar um horário, nós te avisaremos no WhatsApp.");
+    });
+};
+
+// Preparação para chamar no perfil futuramente
+window.enviarAvaliacao = function(nota, comentario) {
+    if(!auth.currentUser) return alert("Precisa fazer login para avaliar.");
+    const nome = document.getElementById('nome')?.value || "Cliente";
+    database.ref('avaliacoes').push({
+        cliente: nome, nota: nota, comentario: comentario, data: new Date().toISOString().split('T')[0]
+    }).then(() => alert("Obrigado pela sua avaliação!"));
+};
