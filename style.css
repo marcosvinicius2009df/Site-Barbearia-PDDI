@@ -578,4 +578,182 @@ section { padding: 120px 5%; text-align: center; }
     color: var(--texto-cinza); font-size: 2rem; cursor: pointer; transition: 0.3s;
 }
 .popup-close:hover { color: var(--perigo); }
+
+/* ==========================================================================
+   12. ELEMENTOS DE UX (BOTÃO TOPO E SELO DE SEGURANÇA)
+   ========================================================================== */
+/* Botão Voltar ao Topo */
+#btn-topo {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+    background: var(--dourado);
+    color: black;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+    transition: var(--transicao);
+}
+
+#btn-topo:hover {
+    transform: translateY(-5px) scale(1.1);
+    background: white;
+}
+
+/* Selo de Segurança HTTPS */
+.selo-seguranca {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 230, 118, 0.1);
+    border: 1px solid var(--sucesso);
+    padding: 10px 20px;
+    border-radius: 50px;
+    color: var(--sucesso);
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.selo-seguranca svg { 
+    width: 16px; 
+    height: 16px; 
+    fill: currentColor; 
+}
+
+/* ==========================================================================
+   13. BARRA DE PROGRESSO DO AGENDAMENTO
+   ========================================================================== */
+.progress-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px auto 30px;
+    position: relative;
+    max-width: 80%;
+}
+
+.progress-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 2px;
+    width: 100%;
+    background: rgba(255,255,255,0.1);
+    z-index: 0;
+}
+
+.progress-step {
+    width: 35px;
+    height: 35px;
+    background: var(--bg-fundo);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--texto-cinza);
+    z-index: 1;
+    transition: 0.4s;
+}
+
+.progress-step.active {
+    border-color: var(--dourado);
+    background: var(--dourado);
+    color: black;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+#progress-text {
+    text-align: center;
+    color: var(--dourado);
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-top: -15px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   14. SELEÇÃO VISUAL DE BARBEIROS E MÚLTIPLOS SERVIÇOS
+   ========================================================================== */
+.grid-selecao { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 15px; 
+    margin-top: 10px; 
+}
+
+/* O novo formato "Pílula" com a bolinha do barbeiro */
+.card-selecao { 
+    display: flex;
+    align-items: center;
+    background: rgba(0,0,0,0.5); 
+    border: 1px solid var(--borda); 
+    border-radius: 50px; /* Borda arredondada elegante */
+    padding: 5px 20px 5px 5px; 
+    cursor: pointer; 
+    transition: 0.3s; 
+    gap: 12px;
+}
+
+.card-selecao img { 
+    width: 45px; 
+    height: 45px; 
+    border-radius: 50%; /* A bolinha perfeita */
+    object-fit: cover; 
+    border: 2px solid transparent; 
+}
+
+.card-selecao p { 
+    color: var(--branco); 
+    font-size: 0.95rem; 
+    font-weight: bold; 
+    margin: 0;
+}
+
+.card-selecao.ativo { 
+    border-color: var(--dourado); 
+    background: rgba(212, 175, 55, 0.1); 
+}
+.card-selecao.ativo img { border-color: var(--dourado); }
+
+/* (Pode manter as regras do .grid-servicos e .card-servico que já lá estavam) */
+.grid-servicos { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.card-servico { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid var(--borda); padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; text-align: left; }
+.card-servico h4 { color: var(--branco); font-size: 1rem; margin-bottom: 5px; }
+.card-servico p { color: var(--texto-cinza); font-size: 0.85rem; }
+.card-servico .preco { color: var(--dourado); font-weight: bold; }
+.card-servico.ativo { border-color: var(--dourado); background: rgba(212, 175, 55, 0.1); }
+
+/* ==========================================================================
+   15. ANIMAÇÃO DO FORMULÁRIO EM ETAPAS (WIZARD)
+   ========================================================================== */
+.bloco-etapa {
+    display: none; 
+    animation: deslizarDireita 0.4s ease forwards;
+}
+
+.bloco-etapa.ativo {
+    display: block; 
+}
+
+@keyframes deslizarDireita {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes deslizarEsquerda {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
 }

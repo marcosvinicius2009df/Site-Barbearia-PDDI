@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
-    <title>Painel Master - Barbearia do Marquinhos</title>
+    <title>JLukas Barber Shop - Oficial</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     
@@ -42,44 +42,42 @@
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
-            
             <div style="background: rgba(212, 175, 55, 0.05); border: 1px solid var(--dourado); padding: 20px; border-radius: 12px;">
                 <h3 style="color: var(--dourado); margin-bottom: 15px;">🔔 Lista de Espera Digital</h3>
                 <div id="lista-espera-admin" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
 
-            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--borda); padding: 20px; border-radius: 12px;">
-                <h3 style="color: var(--branco); margin-bottom: 15px;">✂️ Gestão de Barbeiros</h3>
+            <div style="background: rgba(255, 23, 68, 0.05); border: 1px solid var(--perigo); padding: 20px; border-radius: 12px;">
+                <h3 style="color: var(--perigo); margin-bottom: 15px;">🔒 Bloquear Dia</h3>
                 <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" id="novo-barbeiro" placeholder="Nome do Profissional" style="flex: 1; padding: 10px; border-radius: 6px; background: #000; color: white; border: 1px solid var(--borda);">
-                    <button onclick="adicionarBarbeiro()" style="background: var(--dourado); color: black; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">ADD</button>
+                    <input type="date" id="data-bloqueio" style="flex: 1; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--borda);">
+                    <button onclick="bloquearData()" style="background: var(--perigo); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">BLOQUEAR</button>
                 </div>
-                <div id="lista-barbeiros" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                <div id="lista-bloqueios" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2 style="color: var(--branco);">📅 Próximos Clientes (Hoje)</h2>
-            <button onclick="concluirTodosHoje()" style="background: var(--sucesso); color: black; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);">✓ CONCLUIR TODOS</button>
+            <button onclick="concluirTodosHoje()" style="background: var(--sucesso); color: black; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">✓ CONCLUIR TODOS</button>
         </div>
         <div id="lista-agendamentos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-bottom: 60px;"></div>
 
         <div style="border-top: 1px solid var(--borda); padding-top: 40px; margin-bottom: 40px;">
-            <h2 style="color: var(--dourado); margin-bottom: 20px;">⭐ Moderação de Avaliações</h2>
-            <div id="lista-avaliacoes-admin" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
-        </div>
-
-        <div style="background: rgba(255, 23, 68, 0.05); border: 1px solid var(--perigo); padding: 20px; border-radius: 12px; margin-bottom: 40px;">
-            <h3 style="color: var(--perigo); margin-bottom: 15px;">🔒 Bloquear Dia (Folgas/Feriados)</h3>
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <input type="date" id="data-bloqueio" style="flex: 1; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--borda);">
-                <button onclick="bloquearData()" style="background: var(--perigo); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">BLOQUEAR</button>
+            <h2 style="color: var(--dourado); margin-bottom: 20px;">✂️ Gerir Equipa (Barbeiros)</h2>
+            <div class="form-box" style="margin-bottom: 20px; max-width: 100%; padding: 20px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" id="novo-barbeiro" placeholder="Nome do Profissional" style="flex: 1; padding: 12px; border-radius: 6px; background: #000; color: white; border: 1px solid var(--borda);">
+                    <input type="text" id="img-barbeiro" placeholder="URL da Foto do Rosto (Opcional)" style="flex: 2; padding: 12px; border-radius: 6px; background: #000; color: white; border: 1px solid var(--borda);">
+                    <button onclick="adicionarBarbeiro()" style="background: var(--dourado); color: #000; padding: 0 25px; font-weight: bold; border-radius: 6px; cursor: pointer; border: none;">ADICIONAR</button>
+                </div>
             </div>
-            <div id="lista-bloqueios" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            <div id="lista-barbeiros" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;"></div>
         </div>
 
         <div style="border-top: 1px solid var(--borda); padding-top: 40px; margin-bottom: 40px;">
-            <h2 style="color: var(--dourado); margin-bottom: 20px;">🛠️ Gerir Serviços (Página Inicial)</h2>
+            <h2 style="color: var(--dourado); margin-bottom: 20px;">🛠️ Gerir Serviços (Aparece no Agendamento e Início)</h2>
+            <p style="color: var(--texto-cinza); margin-bottom: 15px; font-size: 0.9rem;">Ex: Corte Clássico, Barba Terapia, Sobrancelha.</p>
             <div class="form-box" style="margin-bottom: 20px; max-width: 100%; padding: 20px;">
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <input type="text" id="serv-nome" placeholder="Nome do Serviço" style="flex: 1; min-width: 200px; padding: 12px; border-radius: 6px; background: #000; color: white; border: 1px solid var(--borda);">
@@ -93,7 +91,22 @@
         </div>
 
         <div style="border-top: 1px solid var(--borda); padding-top: 40px; margin-bottom: 40px;">
-            <h2 style="color: var(--dourado); margin-bottom: 20px;">📸 Gerir Lookbook (Galeria)</h2>
+            <h2 style="color: var(--dourado); margin-bottom: 20px;">📦 Gerir Produtos (Aparece APENAS no Carrinho/Loja)</h2>
+            <p style="color: var(--texto-cinza); margin-bottom: 15px; font-size: 0.9rem;">Ex: Pomadas, Shampoos, Óleos.</p>
+            <div class="form-box" style="margin-bottom: 20px; max-width: 100%; padding: 20px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" id="prod-nome" placeholder="Nome do Produto" style="flex: 1; padding: 12px; border-radius: 6px; background: #000; color: white; border: 1px solid var(--borda);">
+                    <input type="text" id="prod-desc" placeholder="Descrição" style="flex: 2; padding: 12px; border-radius: 6px; background: #000; color: white; border: 1px solid var(--borda);">
+                    <input type="number" id="prod-preco" placeholder="Preço" style="width: 100px; padding: 12px; border-radius: 6px; background: #000; color: white; border: 1px solid var(--borda);">
+                    <input type="text" id="prod-img" placeholder="Link da Imagem (URL)" style="flex: 2; padding: 12px; border-radius: 6px; background: #000; color: white; border: 1px solid var(--borda);">
+                    <button onclick="salvarProduto()" style="background: var(--dourado); color: #000; padding: 0 25px; font-weight: bold; border-radius: 6px; cursor: pointer; border: none;">SALVAR</button>
+                </div>
+            </div>
+            <div id="lista-produtos-admin" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;"></div>
+        </div>
+
+        <div style="border-top: 1px solid var(--borda); padding-top: 40px; margin-bottom: 40px;">
+            <h2 style="color: var(--dourado); margin-bottom: 20px;">📸 Gerir Lookbook (Galeria de Fotos)</h2>
             <div class="form-box" style="margin-bottom: 20px; max-width: 100%; padding: 20px;">
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <input type="text" id="gal-titulo" placeholder="Título da Foto" style="flex: 1; padding: 12px; border-radius: 6px; background: #000; color: white; border: 1px solid var(--borda);">
@@ -104,11 +117,15 @@
             </div>
             <div id="lista-galeria-admin" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;"></div>
         </div>
+        
+        <div style="border-top: 1px solid var(--borda); padding-top: 40px; margin-bottom: 40px;">
+            <h2 style="color: var(--dourado); margin-bottom: 20px;">⭐ Moderação de Avaliações</h2>
+            <div id="lista-avaliacoes-admin" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
+        </div>
 
     </div>
 
     <script>
-        // CONFIGURAÇÃO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
             authDomain: "barbearia-do-marcos.firebaseapp.com",
@@ -129,79 +146,50 @@
             } else { alert("⚠️ Senha incorreta!"); }
         }
 
-        // --- SISTEMA DE DADOS E GRÁFICO ---
         function carregarDadosPainel() {
             const container = document.getElementById('lista-agendamentos');
             const dataHoje = new Date().toISOString().split('T')[0];
-            
             database.ref('clientes').on('value', snap => { document.getElementById('total-clientes').innerText = snap.numChildren() || 0; });
-
             database.ref('agendamentos').on('value', snapshot => {
-                container.innerHTML = "";
-                let countHoje = 0; let faturaHoje = 0; let faturaPorDia = {};
-                const data = snapshot.val();
-                
-                if(!data) {
-                    container.innerHTML = "<p style='color: var(--texto-cinza); grid-column: span 3;'>Sem agendamentos.</p>";
-                    desenharGrafico({}); return;
-                }
-
+                container.innerHTML = ""; let countHoje = 0; let faturaHoje = 0; let faturaPorDia = {}; const data = snapshot.val();
+                if(!data) { container.innerHTML = "<p style='color: var(--texto-cinza); grid-column: span 3;'>Sem agendamentos.</p>"; desenharGrafico({}); return; }
                 Object.keys(data).forEach(id => {
                     const item = data[id];
                     const matchPreco = item.servico ? item.servico.match(/R\$\s*(\d+[\.,]?\d*)/) : null;
                     let valor = matchPreco ? parseFloat(matchPreco[1].replace(',', '.')) : 0;
-                    
-                    if(!isNaN(valor)) {
-                        if(!faturaPorDia[item.data]) faturaPorDia[item.data] = 0;
-                        faturaPorDia[item.data] += valor;
-                    }
-
+                    if(!isNaN(valor)) { if(!faturaPorDia[item.data]) faturaPorDia[item.data] = 0; faturaPorDia[item.data] += valor; }
                     if(item.data === dataHoje) {
                         countHoje++; faturaHoje += valor;
-                        container.innerHTML += `
-                            <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; border-left: 5px solid var(--dourado);">
-                                <h3 style="color:var(--dourado); margin-bottom: 5px;">⏰ ${item.horario} - ${item.cliente}</h3>
-                                <p style="color: var(--texto-cinza); font-size: 0.9rem; margin-bottom: 10px;">${item.servico}</p>
-                                <div style="display:flex; gap:10px;">
-                                    <a href="https://wa.me/${item.whatsapp}" target="_blank" style="background: rgba(0, 230, 118, 0.1); color: var(--sucesso); border: 1px solid var(--sucesso); padding:8px; border-radius: 6px; text-decoration: none; font-weight: bold; flex:1; text-align:center;">ZAP</a>
-                                    <button onclick="removerAgendamento('${id}')" style="background: rgba(255, 23, 68, 0.1); color: var(--perigo); border: 1px solid var(--perigo); padding:8px; border-radius: 6px; font-weight: bold; flex:1; cursor: pointer;">OK</button>
-                                </div>
-                            </div>`;
+                        container.innerHTML += `<div style="background: var(--bg-card); padding: 20px; border-radius: 12px; border-left: 5px solid var(--dourado);">
+                            <h3 style="color:var(--dourado); margin-bottom: 5px;">⏰ ${item.horario} - ${item.cliente}</h3>
+                            <p style="color: var(--texto-cinza); font-size: 0.9rem; margin-bottom: 10px;">${item.servico}</p>
+                            <div style="display:flex; gap:10px;">
+                                <a href="https://wa.me/${item.whatsapp}" target="_blank" style="background: rgba(0, 230, 118, 0.1); color: var(--sucesso); border: 1px solid var(--sucesso); padding:8px; border-radius: 6px; text-decoration: none; font-weight: bold; flex:1; text-align:center;">ZAP</a>
+                                <button onclick="removerAgendamento('${id}')" style="background: rgba(255, 23, 68, 0.1); color: var(--perigo); border: 1px solid var(--perigo); padding:8px; border-radius: 6px; font-weight: bold; flex:1; cursor: pointer;">OK</button>
+                            </div>
+                        </div>`;
                     }
                 });
-                document.getElementById('total-hoje').innerText = countHoje;
-                document.getElementById('faturamento-hoje').innerText = `R$ ${faturaHoje.toFixed(2).replace('.', ',')}`;
-                desenharGrafico(faturaPorDia);
+                document.getElementById('total-hoje').innerText = countHoje; document.getElementById('faturamento-hoje').innerText = `R$ ${faturaHoje.toFixed(2).replace('.', ',')}`; desenharGrafico(faturaPorDia);
             });
         }
-
         function removerAgendamento(id) { if(confirm("Concluir agendamento?")) database.ref('agendamentos/' + id).remove(); }
-        
         function concluirTodosHoje() {
             if(confirm("Deseja concluir TODOS de hoje?")) {
                 const dataHoje = new Date().toISOString().split('T')[0];
                 database.ref('agendamentos').once('value', snapshot => {
-                    const data = snapshot.val(); if(!data) return;
-                    let updates = {};
+                    const data = snapshot.val(); if(!data) return; let updates = {};
                     Object.keys(data).forEach(id => { if(data[id].data === dataHoje) updates[id] = null; });
                     database.ref('agendamentos').update(updates);
                 });
             }
         }
-
         function desenharGrafico(dados) {
             const ctx = document.getElementById('graficoFaturamento').getContext('2d');
-            const datas = Object.keys(dados).sort().slice(-7);
-            const valores = datas.map(d => dados[d]);
+            const datas = Object.keys(dados).sort().slice(-7); const valores = datas.map(d => dados[d]);
             if(meuGrafico) meuGrafico.destroy();
-            meuGrafico = new Chart(ctx, {
-                type: 'line',
-                data: { labels: datas.map(d => d.split('-').reverse().join('/')), datasets: [{ label: 'Faturação', data: valores, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', fill: true, tension: 0.4 }] },
-                options: { responsive: true, plugins: { legend: { display: false } } }
-            });
+            meuGrafico = new Chart(ctx, { type: 'line', data: { labels: datas.map(d => d.split('-').reverse().join('/')), datasets: [{ label: 'Faturação', data: valores, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.1)', fill: true, tension: 0.4 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
         }
-
-        // --- GESTÃO DE CONTEÚDO ---
         function carregarListaEspera() {
             database.ref('lista_espera').on('value', snap => {
                 const div = document.getElementById('lista-espera-admin'); div.innerHTML = "";
@@ -210,42 +198,56 @@
                     const le = child.val();
                     div.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; border: 1px solid var(--borda);">
                         <div style="color:white; font-size:0.9rem;"><strong style="color:var(--dourado);">${le.cliente}</strong> (${le.data.split('-').reverse().join('/')})</div>
-                        <div style="display:flex; gap:10px;">
-                            <a href="https://wa.me/${le.whatsapp}" target="_blank" style="color:var(--sucesso); font-weight:bold; text-decoration:none;">ZAP</a>
-                            <button onclick="database.ref('lista_espera/${child.key}').remove()" style="color:var(--perigo); border:none; background:none; cursor:pointer;">X</button>
-                        </div>
+                        <div style="display:flex; gap:10px;"><a href="https://wa.me/${le.whatsapp}" target="_blank" style="color:var(--sucesso); font-weight:bold; text-decoration:none;">ZAP</a><button onclick="database.ref('lista_espera/${child.key}').remove()" style="color:var(--perigo); border:none; background:none; cursor:pointer;">X</button></div>
                     </div>`;
                 });
             });
         }
-
         function carregarAvaliacoes() {
             database.ref('avaliacoes').on('value', snap => {
                 const div = document.getElementById('lista-avaliacoes-admin'); div.innerHTML = "";
                 if(!snap.exists()) { div.innerHTML = "<p style='color: var(--texto-cinza);'>Sem avaliações.</p>"; return; }
                 snap.forEach(child => {
                     const av = child.val();
-                    div.innerHTML += `<div style="background:var(--bg-card); padding:15px; border-radius:8px; border:1px solid var(--borda);">
-                        <p style="color:var(--dourado);">⭐ ${av.nota}/5</p>
-                        <p style="color:white; font-size:0.9rem; margin:5px 0;">"${av.comentario}"</p>
-                        <button onclick="database.ref('avaliacoes/${child.key}').remove()" style="color:var(--perigo); background:none; border:none; cursor:pointer; font-size:0.8rem;">Apagar</button>
-                    </div>`;
+                    div.innerHTML += `<div style="background:var(--bg-card); padding:15px; border-radius:8px; border:1px solid var(--borda);"><p style="color:var(--dourado);">⭐ ${av.nota}/5</p><p style="color:white; font-size:0.9rem; margin:5px 0;">"${av.comentario}"</p><button onclick="database.ref('avaliacoes/${child.key}').remove()" style="color:var(--perigo); background:none; border:none; cursor:pointer; font-size:0.8rem;">Apagar</button></div>`;
                 });
             });
         }
 
-        function adicionarBarbeiro() { const n = document.getElementById('novo-barbeiro').value; if(n) database.ref('barbeiros').push({ nome: n }).then(() => document.getElementById('novo-barbeiro').value = ''); }
-        function carregarBarbeiros() { database.ref('barbeiros').on('value', snap => { const div = document.getElementById('lista-barbeiros'); div.innerHTML = ""; snap.forEach(c => { div.innerHTML += `<div style="display:flex; justify-content:space-between; color:white; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;">${c.val().nome} <button onclick="database.ref('barbeiros/${c.key}').remove()" style="color:var(--perigo); background:none; border:none; cursor:pointer;">X</button></div>`; }); }); }
+        // BARBEIROS AGORA COM FOTO
+        function adicionarBarbeiro() { 
+            const n = document.getElementById('novo-barbeiro').value; 
+            const i = document.getElementById('img-barbeiro').value; 
+            if(n) database.ref('barbeiros').push({ nome: n, imagem: i }).then(() => { document.getElementById('novo-barbeiro').value = ''; document.getElementById('img-barbeiro').value = ''; }); 
+        }
+        function carregarBarbeiros() { 
+            database.ref('barbeiros').on('value', snap => { 
+                const div = document.getElementById('lista-barbeiros'); div.innerHTML = ""; 
+                snap.forEach(c => { 
+                    const b = c.val();
+                    const img = b.imagem || "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=150&auto=format&fit=crop";
+                    div.innerHTML += `<div style="display:flex; align-items:center; justify-content:space-between; color:white; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;">
+                        <div style="display:flex; align-items:center; gap:10px;"><img src="${img}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;"> ${b.nome}</div>
+                        <button onclick="database.ref('barbeiros/${c.key}').remove()" style="color:var(--perigo); background:none; border:none; cursor:pointer; font-weight:bold;">X</button>
+                    </div>`; 
+                }); 
+            }); 
+        }
+
         function bloquearData() { const d = document.getElementById('data-bloqueio').value; if(d) database.ref('bloqueios').push({ data: d }).then(() => document.getElementById('data-bloqueio').value = ''); }
         function carregarBloqueios() { database.ref('bloqueios').on('value', snap => { const div = document.getElementById('lista-bloqueios'); div.innerHTML = ""; snap.forEach(c => { div.innerHTML += `<div style="display:flex; justify-content:space-between; color:white; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;">${c.val().data.split('-').reverse().join('/')} <button onclick="database.ref('bloqueios/${c.key}').remove()" style="color:var(--perigo); background:none; border:none; cursor:pointer;">X</button></div>`; }); }); }
         
+        // SERVIÇOS
         function salvarServico() { const n = document.getElementById('serv-nome').value, d = document.getElementById('serv-desc').value, p = document.getElementById('serv-preco').value, i = document.getElementById('serv-img').value; if(n && d && p && i) database.ref('servicos').push({ nome: n, descricao: d, preco: p, imagem: i }).then(() => { document.getElementById('serv-nome').value=''; document.getElementById('serv-desc').value=''; document.getElementById('serv-preco').value=''; document.getElementById('serv-img').value=''; }); }
         function carregarServicosAdmin() { database.ref('servicos').on('value', snap => { const div = document.getElementById('lista-servicos-admin'); div.innerHTML = ""; snap.forEach(c => { const s = c.val(); div.innerHTML += `<div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--borda); text-align:center;"><img src="${s.imagem}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:10px;"><p style="color:var(--dourado); font-weight:bold;">${s.nome}</p><button onclick="database.ref('servicos/${c.key}').remove()" style="background:var(--perigo); color:white; border:none; padding:5px; border-radius:4px; width:100%; cursor:pointer;">Remover</button></div>`; }); }); }
         
+        // PRODUTOS
+        function salvarProduto() { const n = document.getElementById('prod-nome').value, d = document.getElementById('prod-desc').value, p = document.getElementById('prod-preco').value, i = document.getElementById('prod-img').value; if(n && d && p && i) database.ref('produtos').push({ nome: n, descricao: d, preco: p, imagem: i }).then(() => { document.getElementById('prod-nome').value=''; document.getElementById('prod-desc').value=''; document.getElementById('prod-preco').value=''; document.getElementById('prod-img').value=''; }); }
+        function carregarProdutosAdmin() { database.ref('produtos').on('value', snap => { const div = document.getElementById('lista-produtos-admin'); div.innerHTML = ""; snap.forEach(c => { const p = c.val(); div.innerHTML += `<div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--borda); text-align:center;"><img src="${p.imagem}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:10px;"><p style="color:var(--sucesso); font-weight:bold;">${p.nome}</p><button onclick="database.ref('produtos/${c.key}').remove()" style="background:var(--perigo); color:white; border:none; padding:5px; border-radius:4px; width:100%; cursor:pointer;">Remover</button></div>`; }); }); }
+
+        // GALERIA
         function salvarGaleria() { const t = document.getElementById('gal-titulo').value, d = document.getElementById('gal-desc').value, i = document.getElementById('gal-img').value; if(t && d && i) database.ref('galeria').push({ titulo: t, descricao: d, imagem: i }).then(() => { document.getElementById('gal-titulo').value=''; document.getElementById('gal-desc').value=''; document.getElementById('gal-img').value=''; }); }
         function carregarGaleriaAdmin() { database.ref('galeria').on('value', snap => { const div = document.getElementById('lista-galeria-admin'); div.innerHTML = ""; snap.forEach(c => { const g = c.val(); div.innerHTML += `<div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--borda); text-align:center;"><img src="${g.imagem}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:10px;"><p style="color:white; font-weight:bold;">${g.titulo}</p><button onclick="database.ref('galeria/${c.key}').remove()" style="background:var(--perigo); color:white; border:none; padding:5px; border-radius:4px; width:100%; cursor:pointer;">Remover</button></div>`; }); }); }
-        
-        function carregarProdutosAdmin() { /* Implementação futura se necessário */ }
     </script>
 </body>
 </html>
