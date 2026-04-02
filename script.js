@@ -1,16 +1,19 @@
-// ==========================================
-// 1. CONFIGURAÇÃO DO FIREBASE
-// ==========================================
-const configDoScript = {
-    apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
-    authDomain: "barbearia-do-marcos.firebaseapp.com",
-    databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
-    projectId: "barbearia-do-marcos"
-};
-
-if (!firebase.apps.length) { firebase.initializeApp(configDoScript); }
-const database = firebase.database();
-const auth = firebase.auth();
+// Função para notificações modernas (Toasts)
+function mostrarAviso(mensagem, cor = "var(--dourado)") {
+    const toast = document.createElement("div");
+    toast.innerText = mensagem;
+    toast.style.cssText = `
+        position: fixed; bottom: 20px; right: 20px; 
+        background: var(--bg-card); color: ${cor}; 
+        padding: 15px 25px; border-radius: 8px; 
+        border: 1px solid ${cor}; z-index: 9999; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+        font-family: 'Poppins', sans-serif;
+        transition: opacity 0.5s;
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 500); }, 3500);
+}
 
 // ==========================================
 // 2. MUDANÇAS NO MENU & AUTO-PREENCHIMENTO
@@ -28,7 +31,6 @@ auth.onAuthStateChanged(user => {
             if (dados) {
                 const inputNome = document.getElementById('nome');
                 const inputZap = document.getElementById('whatsapp');
-                // Ele preenche os dados, mas NÃO avança a tela sozinho. Fica à espera do clique!
                 if (inputNome) { inputNome.value = dados.nome; inputNome.readOnly = true; }
                 if (inputZap) { inputZap.value = dados.whatsapp; inputZap.readOnly = true; }
             }
@@ -45,7 +47,6 @@ const menuToggle = document.getElementById('mobile-menu');
 const navLinks = document.querySelector('.nav-links');
 if(menuToggle && navLinks) menuToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); });
 
-
 // ==========================================
 // 3. MOTOR DE ETAPAS (WIZARD - TIPO TINDER)
 // ==========================================
@@ -53,17 +54,17 @@ window.avancarPasso = function(passoAtual) {
     if(passoAtual === 1) {
         const nome = document.getElementById('nome').value;
         const zap = document.getElementById('whatsapp').value;
-        if(nome.trim() === "" || zap.trim() === "") return alert("Preencha o seu nome e WhatsApp!");
+        if(nome.trim() === "" || zap.trim() === "") return mostrarAviso("⚠️ Preencha o seu nome e WhatsApp!", "var(--perigo)");
         trocarTela(1, 2, "Profissional & Serviço");
     }
     else if(passoAtual === 2) {
-        if(!window.barbeiroSelecionado) return alert("Clique no profissional desejado!");
-        if(window.servicosSelecionados.length === 0) return alert("Escolha pelo menos um serviço!");
+        if(!window.barbeiroSelecionado) return mostrarAviso("⚠️ Clique no profissional desejado!", "var(--perigo)");
+        if(window.servicosSelecionados.length === 0) return mostrarAviso("⚠️ Escolha pelo menos um serviço!", "var(--perigo)");
         trocarTela(2, 3, "Data & Hora");
     }
     else if(passoAtual === 3) {
         const data = document.getElementById('data').value;
-        if(!data || !horarioSelecionado) return alert("Escolha uma data e um horário disponível!");
+        if(!data || !horarioSelecionado) return mostrarAviso("⚠️ Escolha uma data e um horário disponível!", "var(--perigo)");
         trocarTela(3, 4, "Pronto para Confirmar");
     }
 };
@@ -79,18 +80,14 @@ function trocarTela(atual, proxima, texto, voltando = false) {
     const blocoProximo = document.getElementById(`bloco-passo-${proxima}`);
     
     blocoAtual.classList.remove('ativo');
-    
-    // Animação diferente dependendo se avança ou volta
     blocoProximo.style.animation = voltando ? "deslizarEsquerda 0.4s ease forwards" : "deslizarDireita 0.4s ease forwards";
     blocoProximo.classList.add('ativo');
 
-    // Atualiza a barra do topo
     document.getElementById('progress-text').innerText = texto;
     for(let i = 1; i <= 4; i++) {
         document.getElementById(`step-${i}`).className = i <= proxima ? 'progress-step active' : 'progress-step';
     }
 }
-
 
 // ==========================================
 // 4. MOTOR DE SELEÇÃO VISUAL (BARBEIROS E SERVIÇOS)
@@ -219,7 +216,7 @@ function renderizarHorarios(horariosOcupados = []) {
 }
 
 // ==========================================
-// 5. ENVIO DO AGENDAMENTO (COM RECORRÊNCIA)
+// 5. ENVIO DO AGENDAMENTO (COM RECORRÊNCIA E UID)
 // ==========================================
 const formAgendamentoObj = document.getElementById('form-agendamento');
 if (formAgendamentoObj) {
@@ -245,7 +242,12 @@ if (formAgendamentoObj) {
             cliente: nome, whatsapp: numLimpo, barbeiro: window.barbeiroSelecionado, servico: servicoTexto,
             data: dataCorte, horario: horarioSelecionado, status: "Pendente", timestamp: Date.now()
         };
-        if (auth.currentUser) { novoAgendamento.cliente_email = auth.currentUser.email; }
+        
+        // ✨ A MÁGICA ACONTECE AQUI: Salvando Email e UID! ✨
+        if (auth.currentUser) { 
+            novoAgendamento.cliente_email = auth.currentUser.email; 
+            novoAgendamento.cliente_uid = auth.currentUser.uid; 
+        }
 
         const promessasDeEnvio = [];
         promessasDeEnvio.push(database.ref('agendamentos').push(novoAgendamento));
@@ -265,15 +267,21 @@ if (formAgendamentoObj) {
        Promise.all(promessasDeEnvio).then(() => {
             let msg = `✅ *AGENDAMENTO CONFIRMADO!*%0A%0AOlá *${nome}*, o seu horário na *JLukas Barber Shop* foi reservado.%0A%0A✂️ *Serviço:* ${servicoTexto}%0A📅 *Data:* ${dataCorte.split('-').reverse().join('/')}%0A⏰ *Hora:* ${horarioSelecionado}%0A👤 *Barbeiro:* ${window.barbeiroSelecionado}`;
             if (recorrencia !== "nenhuma") { msg += `%0A%0A🔄 *AGENDAMENTO INTELIGENTE:*%0AGarantimos também o mesmo horário para daqui a ${recorrencia} dias (Dia ${dataFuturaFormatada.split('-').reverse().join('/')}).`; }
+            
+            // ⚠️ LEMBRETE: Troque para o seu WhatsApp se ainda não tiver feito
             const seuNumeroFixo = "5561999999999"; 
+            
             window.location.href = `https://api.whatsapp.com/send?phone=${seuNumeroFixo}&text=${msg}`;
-        }).catch(error => { alert("Erro ao agendar: " + error.message); if(btnConfirma) { btnConfirma.innerText = "CONFIRMAR"; btnConfirma.style.opacity = "1"; btnConfirma.style.pointerEvents = "auto"; } });
+        }).catch(error => { 
+            mostrarAviso("❌ Erro ao agendar: " + error.message, "var(--perigo)"); 
+            if(btnConfirma) { btnConfirma.innerText = "CONFIRMAR"; btnConfirma.style.opacity = "1"; btnConfirma.style.pointerEvents = "auto"; } 
+        });
     };
 }
 
 window.entrarListaEspera = function() {
     const nome = document.getElementById('nome')?.value; const zap = document.getElementById('whatsapp')?.value; const dataCorte = document.getElementById('data')?.value;
-    if(!nome || !zap || !dataCorte) return alert("⚠️ Escolha a data no passo anterior.");
+    if(!nome || !zap || !dataCorte) return mostrarAviso("⚠️ Escolha a data no passo anterior.", "var(--perigo)");
     let numLimpo = zap.replace(/\D/g, ""); if (numLimpo.length === 11) numLimpo = "55" + numLimpo;
-    database.ref('lista_espera').push({ cliente: nome, whatsapp: numLimpo, data: dataCorte, timestamp: Date.now() }).then(() => alert("✅ Entrou na Lista de Espera!"));
+    database.ref('lista_espera').push({ cliente: nome, whatsapp: numLimpo, data: dataCorte, timestamp: Date.now() }).then(() => mostrarAviso("✅ Entrou na Lista de Espera!"));
 };

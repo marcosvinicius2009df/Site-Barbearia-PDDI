@@ -1,38 +1,28 @@
-// CONFIGURAÇÃO FIREBASE 
-const firebaseConfig = {
-    apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
-    authDomain: "barbearia-do-marcos.firebaseapp.com",
-    databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
-    projectId: "barbearia-do-marcos",
-    storageBucket: "barbearia-do-marcos.firebasestorage.app",
-    messagingSenderId: "894105389352",
-    appId: "1:894105389352:web:3a5a27602c0d589581e81d",
-    measurementId: "G-53GKXL29Z9"
-};
-
-// Evita erro de inicialização duplicada
-if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-const auth = firebase.auth();
-const database = firebase.database();
-
+// Verifica se tem alguém logado
 auth.onAuthStateChanged(user => {
     if (user) {
+        // Altera o título para dar boas vindas
         document.getElementById('boas-vindas').innerText = `Olá, ${user.email}`;
-        carregarMeusAgendamentos(user.email);
+        
+        // CHAMA A FUNÇÃO AGORA USANDO O UID (ID ÚNICO)
+        carregarMeusAgendamentos(user.uid);
     } else {
+        // Se não tiver logado, expulsa para o login
         window.location.href = "login.html";
     }
 });
 
-function carregarMeusAgendamentos(email) {
+// FUNÇÃO ATUALIZADA: Agora recebe o "uid" no lugar do email
+function carregarMeusAgendamentos(uid) {
     const container = document.getElementById('meus-agendamentos');
     
-    database.ref('agendamentos').orderByChild('cliente_email').equalTo(email).on('value', snapshot => {
+    // Busca no banco de dados usando o "cliente_uid"
+    database.ref('agendamentos').orderByChild('cliente_uid').equalTo(uid).on('value', snapshot => {
         container.innerHTML = "";
         const data = snapshot.val();
         
         if (!data) {
-            container.innerHTML = "<p style='color: var(--texto-cinza);'>Ainda não tem agendamentos marcados.</p>";
+            container.innerHTML = "<p style='color: var(--texto-cinza);'>Você ainda não tem agendamentos marcados.</p>";
             return;
         }
 
@@ -41,18 +31,18 @@ function carregarMeusAgendamentos(email) {
 
         agendamentosArray.forEach(ag => {
             const dataFormatada = ag.data.split('-').reverse().join('/');
+            
+            // Define a cor da etiqueta de status
+            let corStatus = "var(--dourado)";
+            if(ag.status === "Concluído") corStatus = "var(--sucesso)";
+            if(ag.status === "Cancelado") corStatus = "var(--perigo)";
+
             const item = document.createElement('div');
             item.className = "card-item";
             item.style.padding = "25px";
             item.style.marginBottom = "15px";
             item.style.textAlign = "left";
             item.style.width = "100%";
-            
-            // Lógica de cores baseada no status
-            const corStatus = ag.status === 'Pendente' ? 'var(--dourado)' : 'var(--sucesso)';
-            
-            // Criamos a URL para passar os dados para o agendar.html
-            const servicoPuro = ag.servico.split(' + ')[0]; // Tira a pomada se tiver
             
             item.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: start; border-bottom: 1px solid var(--borda); padding-bottom: 15px; margin-bottom: 15px;">
@@ -66,11 +56,16 @@ function carregarMeusAgendamentos(email) {
                 </div>
                 <p style="color: var(--branco); font-weight: 500; margin-bottom: 20px;">✂️ ${ag.servico}</p>
                 
-                <a href="agendar.html" style="display: block; text-align: center; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--dourado); color: var(--dourado); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s;" onmouseover="this.style.background='var(--dourado)'; this.style.color='#000';" onmouseout="this.style.background='rgba(212, 175, 55, 0.1)'; this.style.color='var(--dourado)';">
-                    ↻ REPETIR ESTE CORTE
-                </a>
+                <a href="agendar.html" style="display: block; text-align: center; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--dourado); color: var(--dourado); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s;">NOVO AGENDAMENTO</a>
             `;
             container.appendChild(item);
         });
+    });
+}
+
+// Função do botão de Sair
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "index.html";
     });
 }

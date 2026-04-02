@@ -9,6 +9,7 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="firebase-init.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -50,20 +51,6 @@
         const navLinks = document.querySelector('.nav-links');
         if (menuToggle) { menuToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); }); }
         document.querySelectorAll('.nav-links li a').forEach(link => { link.addEventListener('click', () => { navLinks.classList.remove('active'); }); });
-
-        // INICIALIZANDO FIREBASE
-        const firebaseConfig = {
-            apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
-            authDomain: "barbearia-do-marcos.firebaseapp.com",
-            databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
-            projectId: "barbearia-do-marcos",
-            storageBucket: "barbearia-do-marcos.firebasestorage.app",
-            messagingSenderId: "894105389352",
-            appId: "1:894105389352:web:3a5a27602c0d589581e81d",
-            measurementId: "G-53GKXL29Z9"
-        };
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const database = firebase.database();
 
         // 1. CARREGAR VITRINE DO FIREBASE
         function carregarVitrine() {

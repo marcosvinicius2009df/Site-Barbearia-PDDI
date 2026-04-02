@@ -1,18 +1,27 @@
-// CONFIGURAÇÃO DO SEU FIREBASE
-const firebaseConfig = {
-    apiKey: "AIzaSyDy1-E_o45AuAbfyzNd8Qg6qS-d-pCFExM",
-    authDomain: "barbearia-do-marcos.firebaseapp.com",
-    databaseURL: "https://barbearia-do-marcos-default-rtdb.firebaseio.com",
-    projectId: "barbearia-do-marcos",
-    storageBucket: "barbearia-do-marcos.firebasestorage.app",
-    messagingSenderId: "894105389352",
-    appId: "1:894105389352:web:3a5a27602c0d589581e81d",
-    measurementId: "G-53GKXL29Z9"
-};
+// Função para criar notificações modernas (Toasts)
+function mostrarAviso(mensagem, cor = "var(--dourado)") {
+    const toast = document.createElement("div");
+    toast.innerText = mensagem;
 
-if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-const auth = firebase.auth();
-const database = firebase.database(); // Adicionamos o banco de dados aqui
+    // Estilo do aviso (parecido com o design da sua barbearia)
+    toast.style.cssText = `
+        position: fixed; bottom: 20px; right: 20px; 
+        background: var(--bg-card); color: ${cor}; 
+        padding: 15px 25px; border-radius: 8px; 
+        border: 1px solid ${cor}; z-index: 9999; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+        font-family: 'Poppins', sans-serif;
+        transition: opacity 0.5s;
+    `;
+
+    document.body.appendChild(toast);
+
+    // Faz o aviso sumir sozinho depois de 3.5 segundos
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 500);
+    }, 3500);
+}
 
 const formAuth = document.getElementById('form-auth');
 const btnAuth = document.getElementById('btn-auth');
@@ -74,9 +83,9 @@ formAuth.onsubmit = (e) => {
             })
             .catch(error => {
                 if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                    alert("⚠️ E-mail ou senha incorretos.");
+                    mostrarAviso("⚠️ E-mail ou senha incorretos.");
                 } else {
-                    alert("Erro ao entrar: " + error.message);
+                    mostrarAviso("Erro ao entrar: " + error.message);
                 }
             });
     } else {
@@ -100,16 +109,16 @@ formAuth.onsubmit = (e) => {
                 });
             })
             .then(() => {
-                alert("🎉 Conta criada com sucesso! Bem-vindo(a).");
+                mostrarAviso("🎉 Conta criada com sucesso! Bem-vindo(a).");
                 window.location.href = "index.html";
             })
             .catch(error => {
                 if (error.code === 'auth/email-already-in-use') {
-                    alert("⚠️ Este e-mail já está cadastrado.");
+                    mostrarAviso("⚠️ Este e-mail já está cadastrado.");
                 } else if (error.code === 'auth/weak-password') {
-                    alert("⚠️ A senha deve ter pelo menos 6 caracteres.");
+                    mostrarAviso("⚠️ A senha deve ter pelo menos 6 caracteres.");
                 } else {
-                    alert("Erro ao cadastrar: " + error.message);
+                    mostrarAviso("Erro ao cadastrar: " + error.message);
                 }
             });
     }
