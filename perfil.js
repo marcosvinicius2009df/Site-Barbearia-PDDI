@@ -1,71 +1,52 @@
-// Verifica se tem alguém logado
 auth.onAuthStateChanged(user => {
     if (user) {
-        // Altera o título para dar boas vindas
         document.getElementById('boas-vindas').innerText = `Olá, ${user.email}`;
-        
-        // CHAMA A FUNÇÃO AGORA USANDO O UID (ID ÚNICO)
         carregarMeusAgendamentos(user.uid);
-    } else {
-        // Se não tiver logado, expulsa para o login
-        window.location.href = "login.html";
-    }
+    } else { window.location.href = "login.html"; }
 });
 
-// FUNÇÃO ATUALIZADA: Agora recebe o "uid" no lugar do email
 function carregarMeusAgendamentos(uid) {
     const container = document.getElementById('meus-agendamentos');
-    
-    // Busca no banco de dados usando o "cliente_uid"
-    database.ref('agendamentos').orderByChild('cliente_uid').equalTo(uid).on('value', snapshot => {
+    database.ref('agendamentos').orderByChild('cliente_uid').equalTo(uid).on('value', snap => {
         container.innerHTML = "";
-        const data = snapshot.val();
+        if (!snap.exists()) { container.innerHTML = "<p>Nenhum agendamento.</p>"; return; }
         
-        if (!data) {
-            container.innerHTML = "<p style='color: var(--texto-cinza);'>Você ainda não tem agendamentos marcados.</p>";
-            return;
-        }
-
-        // Transforma num array para mostrar os mais recentes primeiro
-        const agendamentosArray = Object.keys(data).map(id => ({ id, ...data[id] })).reverse();
-
-        agendamentosArray.forEach(ag => {
-            const dataFormatada = ag.data.split('-').reverse().join('/');
+        Object.keys(snap.val()).reverse().forEach(id => {
+            const ag = snap.val()[id];
+            const div = document.createElement('div');
+            div.className = "card-item";
+            div.style = "background:#121212; padding:20px; border-radius:10px; border:1px solid #333;";
             
-            // Define a cor da etiqueta de status
-            let corStatus = "var(--dourado)";
-            if(ag.status === "Concluído") corStatus = "var(--sucesso)";
-            if(ag.status === "Cancelado") corStatus = "var(--perigo)";
+            let btnAvaliar = "";
+            if (ag.status === "Concluído" && !ag.avaliado) {
+                btnAvaliar = `
+                <div id="box-${id}" style="margin-top:15px; border-top:1px solid #333; padding-top:15px;">
+                    <p style="color:#d4af37; font-size:0.8rem;">Avalie seu corte:</p>
+                    <select id="nota-${id}" style="background:#222; color:white; padding:5px; margin-top:5px;">
+                        <option value="5">⭐⭐⭐⭐⭐</option>
+                        <option value="4">⭐⭐⭐⭐</option>
+                        <option value="3">⭐⭐⭐</option>
+                    </select>
+                    <input type="text" id="coment-${id}" placeholder="Comentário..." style="width:100%; margin-top:5px; padding:8px;">
+                    <button onclick="enviarAvaliacao('${id}', '${ag.barbeiro}', '${ag.cliente}')" style="width:100%; background:#d4af37; border:none; padding:10px; margin-top:10px; cursor:pointer; font-weight:bold;">ENVIAR</button>
+                </div>`;
+            } else if (ag.avaliado) { btnAvaliar = "<p style='color:green; margin-top:10px;'>✅ Avaliado</p>"; }
 
-            const item = document.createElement('div');
-            item.className = "card-item";
-            item.style.padding = "25px";
-            item.style.marginBottom = "15px";
-            item.style.textAlign = "left";
-            item.style.width = "100%";
-            
-            item.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: start; border-bottom: 1px solid var(--borda); padding-bottom: 15px; margin-bottom: 15px;">
-                    <div>
-                        <h3 style="color: var(--branco); font-size: 1.2rem; margin-bottom: 5px;">📅 ${dataFormatada} às ${ag.horario}</h3>
-                        <p style="color: var(--texto-cinza); font-size: 0.9rem;"><strong>Barbeiro:</strong> ${ag.barbeiro}</p>
-                    </div>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid ${corStatus}; color: ${corStatus}; padding: 5px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: bold;">
-                        ${ag.status}
-                    </span>
-                </div>
-                <p style="color: var(--branco); font-weight: 500; margin-bottom: 20px;">✂️ ${ag.servico}</p>
-                
-                <a href="agendar.html" style="display: block; text-align: center; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--dourado); color: var(--dourado); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s;">NOVO AGENDAMENTO</a>
-            `;
-            container.appendChild(item);
+            div.innerHTML = `<strong>${ag.data} - ${ag.horario}</strong><br><small>${ag.servico} (${ag.barbeiro})</small><br>
+                             <span style="color:${ag.status === 'Concluído' ? 'green' : 'orange'}">${ag.status}</span>${btnAvaliar}`;
+            container.appendChild(div);
         });
     });
 }
 
-// Função do botão de Sair
-function logout() {
-    auth.signOut().then(() => {
-        window.location.href = "index.html";
+window.enviarAvaliacao = function(agId, barbeiro, cliente) {
+    const nota = document.getElementById(`nota-${agId}`).value;
+    const coment = document.getElementById(`coment-${agId}`).value;
+    database.ref('avaliacoes').push({ nota: parseInt(nota), comentario: coment, barbeiro: barbeiro, cliente: cliente })
+    .then(() => {
+        database.ref('agendamentos/' + agId).update({ avaliado: true });
+        alert("Obrigado!");
     });
 }
+
+function logout() { auth.signOut().then(() => window.location.href = "index.html"); }

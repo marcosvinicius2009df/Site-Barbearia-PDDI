@@ -157,27 +157,37 @@ window.buscarHorariosOcupados = function() {
     const dataEscolhida = inputData?.value;
     const barbeiroEscolhido = window.barbeiroSelecionado;
 
+    // Se não escolheu data ou barbeiro, pede para escolher
     if (!dataEscolhida || !barbeiroEscolhido) {
         listaHorarios.innerHTML = "<p style='color: var(--dourado); grid-column: span 3; text-align: center; font-size: 0.9rem;'>📅 Escolha a data.</p>";
         return;
     }
 
+    // Mostra mensagem de carregamento
     listaHorarios.innerHTML = "<p style='color: var(--texto-cinza); grid-column: span 3; text-align: center;'>Verificando...</p>";
 
+    // 1. VERIFICA BLOQUEIO DE AGENDA (A nossa Ideia 3)
     database.ref('bloqueios').orderByChild('data').equalTo(dataEscolhida).once('value').then(snapBloqueio => {
         if (snapBloqueio.exists()) {
             listaHorarios.innerHTML = "<p style='color: var(--perigo); grid-column: span 3; text-align: center; font-weight: bold;'>❌ Fechado neste dia.</p>";
             return;
         }
 
+        // 2. SE NÃO ESTIVER BLOQUEADO, BUSCA OS HORÁRIOS OCUPADOS
         database.ref('agendamentos').once('value').then(snapshot => {
             const agendamentos = snapshot.val();
             let horariosOcupados = [];
+            
             if (agendamentos) {
                 Object.values(agendamentos).forEach(ag => {
-                    if (ag.data === dataEscolhida && ag.barbeiro === barbeiroEscolhido) horariosOcupados.push(ag.horario);
+                    // Pega os horários apenas se a data bater, o barbeiro for o mesmo, e o status NÃO for cancelado
+                    if (ag.data === dataEscolhida && ag.barbeiro === barbeiroEscolhido && ag.status !== "Cancelado") {
+                        horariosOcupados.push(ag.horario);
+                    }
                 });
             }
+            
+            // Chama a função que desenha os botões na tela
             renderizarHorarios(horariosOcupados);
         });
     });
