@@ -77,7 +77,7 @@
                 </p>
                 <div class="selo-seguranca" style="margin-top: 15px;">
                     <svg viewBox="0 0 24 24" style="width: 20px; vertical-align: middle; fill: var(--sucesso);"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                    <span style="color: var(--sucesso); font-size: 0.85rem; vertical-align: middle; margin-left: 5px;">Ambiente 100% Seguro (SSL)</span>
+                    <span style="color: var(--sucesso); font-size: 0.85rem; vertical-align: middle; margin-left: 5px;">Ambiente 100% Seguro</span>
                 </div>
             </div>
             <div class="footer-links">
@@ -101,51 +101,82 @@
     </footer>
 
     <script>
-        // 1. CARREGAR SERVIÇOS DO BANCO
-        database.ref('servicos').on('value', snap => {
-            const container = document.getElementById('dinamico-servicos');
-            container.innerHTML = "";
-            if(!snap.exists()) { container.innerHTML = "<p style='color:var(--texto-cinza)'>Nenhum serviço cadastrado.</p>"; return; }
+        // Envolvemos tudo num bloco seguro (Try/Catch) para não travar o site
+        try {
+            // Garante que o banco de dados está a ser chamado corretamente
+            const db = (typeof database !== 'undefined') ? database : firebase.database();
             
-            snap.forEach(child => {
-                const s = child.val();
-                container.innerHTML += `
-                <div class="card-item">
-                    <img src="${s.imagem}" alt="${s.nome}" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3);">
-                    <div>
-                        <h3 style="color: var(--branco); font-size: 1.5rem; margin-bottom: 10px;">${s.nome}</h3>
-                        <p style="color: var(--texto-cinza); font-size: 0.95rem; margin-bottom: 20px;">${s.descricao}</p>
-                    </div>
-                    <span class="preco-tag">R$ ${parseFloat(s.preco).toFixed(2).replace('.', ',')}</span>
-                </div>`;
+            // 1. CARREGAR SERVIÇOS DO BANCO
+            db.ref('servicos').on('value', snap => {
+                const container = document.getElementById('dinamico-servicos');
+                if(!container) return; // Segurança extra
+                
+                container.innerHTML = ""; // Limpa o "A carregar..."
+                
+                if(!snap.exists()) { 
+                    container.innerHTML = "<p style='color:var(--texto-cinza); text-align: center;'>Nenhum serviço cadastrado ainda no painel administrativo.</p>"; 
+                    return; 
+                }
+                
+                snap.forEach(child => {
+                    const s = child.val();
+                    
+                    // Prevenção de erros caso algum serviço falte informação no banco
+                    const imgServico = s.imagem || "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop";
+                    const precoLimpo = s.preco ? parseFloat(s.preco).toFixed(2).replace('.', ',') : "0,00";
+                    const nomeServico = s.nome || "Serviço sem nome";
+                    const descServico = s.descricao || "";
+                    
+                    container.innerHTML += `
+                    <div class="card-item">
+                        <img src="${imgServico}" alt="${nomeServico}" style="width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3);">
+                        <div>
+                            <h3 style="color: var(--branco); font-size: 1.5rem; margin-bottom: 10px;">${nomeServico}</h3>
+                            <p style="color: var(--texto-cinza); font-size: 0.95rem; margin-bottom: 20px;">${descServico}</p>
+                        </div>
+                        <span class="preco-tag">R$ ${precoLimpo}</span>
+                    </div>`;
+                });
+            }, error => {
+                console.error("Erro no Firebase (Serviços):", error);
+                document.getElementById('dinamico-servicos').innerHTML = "<p style='color:red; text-align: center;'>⚠️ Erro ao conectar com o banco de dados.</p>";
             });
-        });
 
-        // 2. CARREGAR GALERIA DO BANCO
-        database.ref('galeria').on('value', snap => {
-            const container = document.getElementById('dinamico-galeria');
-            container.innerHTML = "";
-            if(!snap.exists()) { container.innerHTML = "<p style='color:var(--texto-cinza)'>Nenhuma foto na galeria.</p>"; return; }
+            // 2. CARREGAR GALERIA DO BANCO
+            db.ref('galeria').on('value', snap => {
+                const container = document.getElementById('dinamico-galeria');
+                if(!container) return;
+                
+                container.innerHTML = ""; // Limpa o "A carregar..."
+                
+                if(!snap.exists()) { 
+                    container.innerHTML = "<p style='color:var(--texto-cinza); text-align: center;'>Nenhuma foto cadastrada na galeria.</p>"; 
+                    return; 
+                }
 
-            snap.forEach(child => {
-                const g = child.val();
-                container.innerHTML += `
-                <div class="card-item">
-                    <img src="${g.imagem}" alt="${g.titulo}" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3);">
-                    <div>
-                        <h3 style="color: var(--branco); font-size: 1.5rem; margin-bottom: 10px;">${g.titulo}</h3>
-                        <p style="color: var(--texto-cinza); font-size: 0.95rem; margin-bottom: 20px;">${g.descricao}</p>
-                    </div>
-                </div>`;
+                snap.forEach(child => {
+                    const g = child.val();
+                    
+                    const imgGaleria = g.imagem || "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop";
+                    const tituloGaleria = g.titulo || "Lookbook";
+                    const descGaleria = g.descricao || "";
+                    
+                    container.innerHTML += `
+                    <div class="card-item">
+                        <img src="${imgGaleria}" alt="${tituloGaleria}" style="width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.3);">
+                        <div>
+                            <h3 style="color: var(--branco); font-size: 1.5rem; margin-bottom: 10px;">${tituloGaleria}</h3>
+                            <p style="color: var(--texto-cinza); font-size: 0.95rem; margin-bottom: 20px;">${descGaleria}</p>
+                        </div>
+                    </div>`;
+                });
+            }, error => {
+                console.error("Erro no Firebase (Galeria):", error);
+                document.getElementById('dinamico-galeria').innerHTML = "<p style='color:red; text-align: center;'>⚠️ Erro ao conectar com o banco de dados.</p>";
             });
-        });
-        
-        // 3. MENU MOBILE TOGGLE
-        const mobileBtn = document.getElementById('mobile-menu');
-        if(mobileBtn) {
-            mobileBtn.addEventListener('click', () => {
-                document.querySelector('.nav-links').classList.toggle('active');
-            });
+
+        } catch (erro) {
+            console.error("Erro fatal no script:", erro);
         }
     </script>
     <script src="script.js"></script>

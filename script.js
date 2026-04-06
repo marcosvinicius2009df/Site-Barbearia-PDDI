@@ -43,9 +43,24 @@ auth.onAuthStateChanged(user => {
 
 function fazerLogout() { auth.signOut().then(() => { window.location.href = "index.html"; }); }
 
+// ✨ A CORREÇÃO DO MENU MOBILE ESTÁ AQUI ✨
 const menuToggle = document.getElementById('mobile-menu');
 const navLinks = document.querySelector('.nav-links');
-if(menuToggle && navLinks) menuToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); });
+
+if(menuToggle && navLinks) {
+    // 1. Abre e fecha ao clicar nos 3 pontinhos
+    menuToggle.addEventListener('click', () => { 
+        navLinks.classList.toggle('active'); 
+    });
+
+    // 2. O Segredo: Fecha o menu ao clicar em qualquer opção dentro dele
+    const linksDoMenu = navLinks.querySelectorAll('a');
+    linksDoMenu.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+        });
+    });
+}
 
 // ==========================================
 // 3. MOTOR DE ETAPAS (WIZARD - TIPO TINDER)
@@ -157,37 +172,31 @@ window.buscarHorariosOcupados = function() {
     const dataEscolhida = inputData?.value;
     const barbeiroEscolhido = window.barbeiroSelecionado;
 
-    // Se não escolheu data ou barbeiro, pede para escolher
     if (!dataEscolhida || !barbeiroEscolhido) {
         listaHorarios.innerHTML = "<p style='color: var(--dourado); grid-column: span 3; text-align: center; font-size: 0.9rem;'>📅 Escolha a data.</p>";
         return;
     }
 
-    // Mostra mensagem de carregamento
     listaHorarios.innerHTML = "<p style='color: var(--texto-cinza); grid-column: span 3; text-align: center;'>Verificando...</p>";
 
-    // 1. VERIFICA BLOQUEIO DE AGENDA (A nossa Ideia 3)
     database.ref('bloqueios').orderByChild('data').equalTo(dataEscolhida).once('value').then(snapBloqueio => {
         if (snapBloqueio.exists()) {
             listaHorarios.innerHTML = "<p style='color: var(--perigo); grid-column: span 3; text-align: center; font-weight: bold;'>❌ Fechado neste dia.</p>";
             return;
         }
 
-        // 2. SE NÃO ESTIVER BLOQUEADO, BUSCA OS HORÁRIOS OCUPADOS
         database.ref('agendamentos').once('value').then(snapshot => {
             const agendamentos = snapshot.val();
             let horariosOcupados = [];
             
             if (agendamentos) {
                 Object.values(agendamentos).forEach(ag => {
-                    // Pega os horários apenas se a data bater, o barbeiro for o mesmo, e o status NÃO for cancelado
                     if (ag.data === dataEscolhida && ag.barbeiro === barbeiroEscolhido && ag.status !== "Cancelado") {
                         horariosOcupados.push(ag.horario);
                     }
                 });
             }
             
-            // Chama a função que desenha os botões na tela
             renderizarHorarios(horariosOcupados);
         });
     });
@@ -253,7 +262,6 @@ if (formAgendamentoObj) {
             data: dataCorte, horario: horarioSelecionado, status: "Pendente", timestamp: Date.now()
         };
         
-        // ✨ A MÁGICA ACONTECE AQUI: Salvando Email e UID! ✨
         if (auth.currentUser) { 
             novoAgendamento.cliente_email = auth.currentUser.email; 
             novoAgendamento.cliente_uid = auth.currentUser.uid; 
