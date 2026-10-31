@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
-    <title>JLukas Barber Shop - Oficial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>JLukas Barber Shop - Agendamento</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap" rel="stylesheet">
     
@@ -12,7 +12,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="firebase-init.js"></script>
     <script>
-    // Verifica se o usuário está logado usando a configuração do firebase-init.js
     auth.onAuthStateChanged(user => {
         if (!user) { 
             alert("⚠️ Precisa fazer login para agendar!"); 
@@ -52,7 +51,7 @@
                     </div>
                     <div class="campo">
                         <label>WhatsApp (com DDD):</label>
-                        <input type="text" id="whatsapp" placeholder="A carregar..." required>
+                        <input type="tel" id="whatsapp" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="A carregar..." required>
                     </div>
                     <button type="button" class="btn-confirmar" onclick="avancarPasso(1)" style="margin-top: 20px;">CONTINUAR ➔</button>
                 </div>
@@ -80,7 +79,7 @@
                 <div id="bloco-passo-3" class="bloco-etapa">
                     <div class="campo">
                         <label>Data:</label>
-                        <input type="date" id="data" required onchange="buscarHorariosOcupados();">
+                        <input type="date" id="data" required>
                     </div>
                     <div class="campo">
                         <label>Escolha o Horário:</label>

@@ -1,0 +1,11 @@
+JLUKAS BARBER SHOP — ENTREGA 01
+
+1. Faça backup da versão atualmente publicada.
+2. Extraia o ZIP mantendo todos os arquivos na mesma pasta.
+3. Confira as regras do Firebase antes de publicar.
+4. Migre os agendamentos antigos para reservas_slots com Firebase Admin SDK.
+5. Troque o WhatsApp 5561999999999 pelo número oficial em script.js e produtos.html.
+6. Publique os arquivos em ambiente de teste primeiro.
+7. Execute os testes descritos em README-SEGURANCA.md.
+
+Não compartilhe credenciais de administrador do Firebase no navegador ou neste chat.

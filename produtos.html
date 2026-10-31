@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>JLukas Barber Shop - Loja Oficial</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;800&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
         </ul>
     </nav>
 
-    <div class="cart-icon" onclick="abrirCarrinho()">
+    <div class="cart-icon" role="button" tabindex="0" aria-label="Abrir carrinho">
         🛒 <span id="contagem-carrinho" class="cart-count">0</span>
     </div>
 
@@ -39,7 +39,7 @@
         </div>
     </section>
 
-    <div id="modal-carrinho" style="visibility: hidden; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+    <div id="modal-carrinho" aria-hidden="true" style="visibility: hidden; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
         <div class="form-box" style="background: #111; border: 1px solid var(--dourado); width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
             <h2 style="color: var(--dourado); margin-bottom: 20px;">Meu Carrinho</h2>
             <div id="itens-carrinho"></div>
@@ -51,169 +51,79 @@
     </div>
 
     <script>
-        // ==========================================
-        // 1. FUNÇÕES DE INTERFACE (Menu e Toasts)
-        // ==========================================
         const menuToggle = document.getElementById('mobile-menu');
         const navLinks = document.querySelector('.nav-links');
-        if (menuToggle) { menuToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); }); }
-
-        function mostrarAviso(mensagem) {
-            const toast = document.createElement("div");
-            toast.innerText = mensagem;
-            toast.style.cssText = `
-                position: fixed; bottom: 20px; right: 20px; 
-                background: rgba(18, 18, 18, 0.9); color: var(--dourado); 
-                padding: 15px 25px; border-radius: 8px; 
-                border: 1px solid var(--dourado); z-index: 9999; 
-                box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
-                font-family: 'Poppins', sans-serif;
-                transition: opacity 0.5s;
-            `;
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = "0";
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+            navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => navLinks.classList.remove('active')));
         }
-
-        // ==========================================
-        // 2. CARREGAR VITRINE DO BANCO DE DADOS
-        // ==========================================
-        function carregarVitrine() {
-            const vitrine = document.getElementById('vitrine-produtos');
-
-            database.ref('produtos').on('value', snapshot => {
-                vitrine.innerHTML = ""; 
-                const data = snapshot.val();
-
-                if(!data) {
-                    vitrine.innerHTML = `
-                        <div style="grid-column: span 3; text-align: center; padding: 50px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid #333;">
-                            <h3 style="color: var(--dourado); margin-bottom: 10px;">Estoque Renovando</h3>
-                            <p style="color: var(--texto-cinza);">Os nossos produtos esgotaram. Volte em breve!</p>
-                        </div>`;
-                    return;
-                }
-
-                snapshot.forEach(child => {
-                    const p = child.val();
-                    const precoFmt = parseFloat(p.preco).toFixed(2).replace('.', ',');
-                    
-                    vitrine.innerHTML += `
-                        <div class="card-item" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
-                            <div>
-                                <img src="${p.imagem}" alt="${p.nome}" style="width: 100%; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333;">
-                                <h3 style="color: var(--branco); font-size: 1.2rem; margin-bottom: 10px;">${p.nome}</h3>
-                            </div>
-                            <div>
-                                <span class="preco-tag" style="display: inline-block; margin-bottom: 15px; font-size: 1.4rem;">R$ ${precoFmt}</span>
-                                <button onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})" class="btn-confirmar" style="width: 100%; padding: 12px; display: flex; justify-content: center; align-items: center; gap: 10px;">
-                                    🛒 ADICIONAR
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-            });
+        function avisoLoja(mensagem) {
+            const toast = document.createElement('div'); toast.textContent = String(mensagem); toast.setAttribute('role','status');
+            toast.style.cssText = 'position:fixed;bottom:20px;right:20px;max-width:90vw;background:#121212;color:var(--dourado);padding:15px 25px;border-radius:8px;border:1px solid var(--dourado);z-index:99999;';
+            document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000);
         }
-        
-        carregarVitrine();
-
-        // ==========================================
-        // 3. LÓGICA DO CARRINHO (LocalStorage)
-        // ==========================================
-        let carrinho = JSON.parse(localStorage.getItem('carrinhoJLukas')) || [];
-
-        function atualizarIcone() {
-            const contador = document.getElementById('contagem-carrinho');
-            contador.innerText = carrinho.length;
-            
-            // Efeito visual na sacola
-            const icone = document.querySelector('.cart-icon');
-            if (icone) {
-                icone.style.transform = 'scale(1.2)';
-                setTimeout(() => icone.style.transform = 'scale(1)', 200);
-            }
-        }
-
-        function adicionarAoCarrinho(nome, preco) {
-            carrinho.push({ nome: nome, preco: parseFloat(preco) });
-            localStorage.setItem('carrinhoJLukas', JSON.stringify(carrinho));
-            
-            atualizarIcone();
-            mostrarAviso(`🛒 ${nome} adicionado!`);
-        }
-
-        function abrirCarrinho() {
-            const modal = document.getElementById('modal-carrinho');
-            modal.style.visibility = 'visible';
-            renderizarCarrinho();
-        }
-
-        function fecharCarrinho() {
-            document.getElementById('modal-carrinho').style.visibility = 'hidden';
-        }
-
+        const vitrine = document.getElementById('vitrine-produtos');
+        const modalCarrinho = document.getElementById('modal-carrinho');
+        const numeroWhatsAppLoja = '5561999999999'; 
+        let carrinho = [];
+        try { const salvo = JSON.parse(localStorage.getItem('carrinhoJLukas') || '[]'); carrinho = Array.isArray(salvo) ? salvo.filter(x => x && typeof x.nome === 'string' && Number.isFinite(Number(x.preco)) && Number(x.preco) >= 0) : []; }
+        catch { carrinho = []; localStorage.removeItem('carrinhoJLukas'); }
+        function salvarCarrinho() { localStorage.setItem('carrinhoJLukas', JSON.stringify(carrinho)); }
+        function atualizarIcone() { const contador = document.getElementById('contagem-carrinho'); if (contador) contador.textContent = String(carrinho.length); }
+        function abrirCarrinho() { modalCarrinho.classList.add('ativo'); modalCarrinho.setAttribute('aria-hidden','false'); renderizarCarrinho(); }
+        function fecharCarrinho() { modalCarrinho.classList.remove('ativo'); modalCarrinho.setAttribute('aria-hidden','true'); }
+        window.abrirCarrinho = abrirCarrinho; window.fecharCarrinho = fecharCarrinho;
         function renderizarCarrinho() {
-            const lista = document.getElementById('itens-carrinho');
-            let total = 0;
-            lista.innerHTML = "";
-            
-            if(carrinho.length === 0) {
-                lista.innerHTML = "<p style='color: var(--texto-cinza); text-align: center;'>O seu carrinho está vazio.</p>";
-            }
-
+            const lista = document.getElementById('itens-carrinho'); lista.replaceChildren(); let total = 0;
+            if (!carrinho.length) { const p = document.createElement('p'); p.textContent = 'O seu carrinho está vazio.'; lista.appendChild(p); }
             carrinho.forEach((item, index) => {
-                total += item.preco;
-                lista.innerHTML += `
-                    <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom:15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                        <span style="color: white; font-weight: 500;">${item.nome}</span>
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <span style="color: var(--dourado); font-weight: bold;">R$ ${item.preco.toFixed(2).replace('.',',')}</span> 
-                            <button onclick="removerItem(${index})" style="background:var(--perigo); border:none; color:white; width: 30px; height: 30px; border-radius: 6px; cursor:pointer; font-weight: bold;">X</button>
-                        </div>
-                    </div>`;
+                const linha = document.createElement('div'); linha.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px;background:rgba(255,255,255,.05);padding:15px;border-radius:8px;';
+                const nome = document.createElement('span'); nome.textContent = item.nome; nome.style.color = 'white';
+                const grupo = document.createElement('div'); grupo.style.cssText = 'display:flex;align-items:center;gap:12px;';
+                const preco = Number(item.preco); total += preco; const valor = document.createElement('span'); valor.textContent = `R$ ${preco.toFixed(2).replace('.', ',')}`; valor.style.color = 'var(--dourado)';
+                const remover = document.createElement('button'); remover.type = 'button'; remover.textContent = 'Remover'; remover.setAttribute('aria-label', `Remover ${item.nome}`); remover.addEventListener('click', () => removerItem(index));
+                grupo.append(valor, remover); linha.append(nome, grupo); lista.appendChild(linha);
             });
-            document.getElementById('total-carrinho').innerText = `Total: R$ ${total.toFixed(2).replace('.',',')}`;
+            document.getElementById('total-carrinho').textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
         }
-
-        function removerItem(index) {
-            carrinho.splice(index, 1);
-            localStorage.setItem('carrinhoJLukas', JSON.stringify(carrinho));
-            
-            atualizarIcone();
-            renderizarCarrinho();
+        function adicionarAoCarrinho(nome, preco) {
+            const valor = Number(preco); if (!String(nome).trim() || !Number.isFinite(valor) || valor < 0) return avisoLoja('Produto inválido.');
+            carrinho.push({ nome: String(nome).slice(0,100), preco: valor }); salvarCarrinho(); atualizarIcone(); avisoLoja('Produto adicionado ao carrinho.');
         }
-
+        function removerItem(index) { carrinho.splice(index,1); salvarCarrinho(); atualizarIcone(); renderizarCarrinho(); }
+        window.removerItem = removerItem;
         function finalizarCompra() {
-            if(carrinho.length === 0) return alert("O carrinho está vazio! Adicione produtos antes de finalizar.");
-            
-            let texto = "Olá, JLukas! Gostaria de pedir os seguintes produtos da loja:%0A%0A";
-            let total = 0;
-            
-            carrinho.forEach(item => {
-                texto += `📦 *${item.nome}* - R$ ${item.preco.toFixed(2).replace('.',',')}%0A`;
-                total += item.preco;
-            });
-            
-            texto += `%0A💰 *Total a pagar: R$ ${total.toFixed(2).replace('.',',')}*`;
-            
-            // Limpa o carrinho
-            carrinho = [];
-            localStorage.removeItem('carrinhoJLukas');
-            atualizarIcone();
-            fecharCarrinho();
-            
-            // ⚠️ ATENÇÃO: Substitua os 9s pelo seu número real do WhatsApp
-            const seuNumeroWhatsApp = "5561999999999"; 
-            window.open(`https://api.whatsapp.com/send?phone=${seuNumeroWhatsApp}&text=${texto}`, '_blank');
+            if (!carrinho.length) return avisoLoja('Adicione produtos antes de finalizar.');
+            const total = carrinho.reduce((sum,item) => sum + Number(item.preco), 0);
+            const linhas = carrinho.map(item => `• ${item.nome} — R$ ${Number(item.preco).toFixed(2).replace('.', ',')}`);
+            const mensagem = `Olá, JLukas! Gostaria de solicitar estes produtos:\n\n${linhas.join('\n')}\n\nTotal estimado: R$ ${total.toFixed(2).replace('.', ',')}\n\nAguardo confirmação de disponibilidade e pagamento.`;
+            const url = `https://wa.me/${numeroWhatsAppLoja}?text=${encodeURIComponent(mensagem)}`;
+            const link = document.createElement('a'); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
+            document.body.appendChild(link); link.click(); link.remove();
         }
-
-        // Garante que o ícone atualize ao abrir a página
-        window.onload = function() {
-            atualizarIcone();
-        };
+        window.finalizarCompra = finalizarCompra;
+        const cartButton = document.querySelector('.cart-icon');
+        cartButton?.addEventListener('click', abrirCarrinho);
+        cartButton?.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); abrirCarrinho(); } });
+        modalCarrinho?.addEventListener('click', event => { if (event.target === modalCarrinho) fecharCarrinho(); });
+        document.addEventListener('keydown', event => { if (event.key === 'Escape') fecharCarrinho(); });
+        database.ref('produtos').on('value', snapshot => {
+            vitrine.replaceChildren();
+            if (!snapshot.exists()) { const p = document.createElement('p'); p.textContent = 'Os nossos produtos estão sendo atualizados. Volte em breve!'; vitrine.appendChild(p); return; }
+            snapshot.forEach(child => {
+                const produto = child.val() || {}; const preco = Number(produto.preco);
+                if (!String(produto.nome || '').trim() || !Number.isFinite(preco) || preco < 0) return;
+                const card = document.createElement('article'); card.className = 'card-item'; card.style.cssText = 'display:flex;flex-direction:column;justify-content:space-between;height:100%;';
+                const topo = document.createElement('div'); const img = document.createElement('img');
+                try { const u = new URL(produto.imagem || '', location.origin); img.src = ['http:','https:'].includes(u.protocol) ? u.href : ''; } catch { img.src = ''; }
+                img.alt = String(produto.nome); img.loading = 'lazy'; img.style.cssText = 'width:100%;height:250px;object-fit:cover;border-radius:8px;margin-bottom:15px;border:1px solid #333;';
+                const nome = document.createElement('h3'); nome.textContent = String(produto.nome); nome.style.cssText = 'color:var(--branco);font-size:1.2rem;margin-bottom:10px;'; topo.append(img,nome);
+                const baixo = document.createElement('div'); const valor = document.createElement('span'); valor.textContent = `R$ ${preco.toFixed(2).replace('.', ',')}`; valor.className = 'preco-tag'; valor.style.cssText = 'display:inline-block;margin-bottom:15px;font-size:1.4rem;';
+                const botao = document.createElement('button'); botao.type = 'button'; botao.className = 'btn-confirmar'; botao.textContent = '🛒 ADICIONAR'; botao.style.width = '100%'; botao.addEventListener('click', () => adicionarAoCarrinho(produto.nome, preco));
+                baixo.append(valor,botao); card.append(topo,baixo); vitrine.appendChild(card);
+            });
+        }, error => { console.error(error); vitrine.textContent = 'Não foi possível carregar os produtos.'; });
+        atualizarIcone();
     </script>
 </body>
 </html>
