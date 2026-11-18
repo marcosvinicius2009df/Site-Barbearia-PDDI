@@ -3,20 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <title>JLukas Barber Shop - Loja Oficial</title>
+    <title>Loja — JLukas Barber Shop</title>
+    <meta name="description" content="Produtos premium selecionados pelos barbeiros da JLukas. Monte seu pedido e finalize pelo WhatsApp.">
+    <meta name="theme-color" content="#030303">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="firebase-init.js"></script>
 </head>
 <body style="background-color: var(--bg-fundo); color: white;">
+    <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
     
     <nav class="navbar">
         <div class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">JLukas Barber Shop</a></div>
-        <div class="menu-toggle" id="mobile-menu">☰</div>
+        <div class="menu-toggle" id="mobile-menu" role="button" tabindex="0" aria-label="Abrir menu" aria-expanded="false">☰</div>
         <ul class="nav-links">
             <li><a href="index.html">Início</a></li>
             <li><a href="agendar.html">Agendar</a></li>
@@ -28,7 +36,7 @@
         🛒 <span id="contagem-carrinho" class="cart-count">0</span>
     </div>
 
-    <section class="secao-produtos" style="margin-top: 100px; text-align: center;">
+    <section id="conteudo" class="secao-produtos" style="margin-top: 100px; text-align: center;">
         <h2 class="titulo-secao">Nossa Linha Exclusiva</h2>
         <p style="color: var(--texto-cinza); margin-bottom: 40px;">Produtos premium selecionados pelos nossos barbeiros.</p>
         
@@ -54,7 +62,8 @@
         const menuToggle = document.getElementById('mobile-menu');
         const navLinks = document.querySelector('.nav-links');
         if (menuToggle && navLinks) {
-            menuToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+            menuToggle.addEventListener('click', () => { const a = navLinks.classList.toggle('active'); menuToggle.setAttribute('aria-expanded', String(a)); });
+            menuToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); menuToggle.click(); } });
             navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => navLinks.classList.remove('active')));
         }
         function avisoLoja(mensagem) {
@@ -64,39 +73,56 @@
         }
         const vitrine = document.getElementById('vitrine-produtos');
         const modalCarrinho = document.getElementById('modal-carrinho');
-        const numeroWhatsAppLoja = '5561999999999'; 
+        const numeroWhatsAppLoja = WHATSAPP_OFICIAL;
         let carrinho = [];
-        try { const salvo = JSON.parse(localStorage.getItem('carrinhoJLukas') || '[]'); carrinho = Array.isArray(salvo) ? salvo.filter(x => x && typeof x.nome === 'string' && Number.isFinite(Number(x.preco)) && Number(x.preco) >= 0) : []; }
-        catch { carrinho = []; localStorage.removeItem('carrinhoJLukas'); }
-        function salvarCarrinho() { localStorage.setItem('carrinhoJLukas', JSON.stringify(carrinho)); }
-        function atualizarIcone() { const contador = document.getElementById('contagem-carrinho'); if (contador) contador.textContent = String(carrinho.length); }
-        function abrirCarrinho() { modalCarrinho.classList.add('ativo'); modalCarrinho.setAttribute('aria-hidden','false'); renderizarCarrinho(); }
-        function fecharCarrinho() { modalCarrinho.classList.remove('ativo'); modalCarrinho.setAttribute('aria-hidden','true'); }
+        const MAX_QTD = 20;
+        const reais = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+        try {
+            const salvo = JSON.parse(localStorage.getItem('carrinhoJLukas') || '[]');
+            carrinho = Array.isArray(salvo) ? salvo.filter(x => x && typeof x.nome === 'string' && Number.isFinite(Number(x.preco)) && Number(x.preco) >= 0)
+                .map(x => ({ nome: x.nome.slice(0, 100), preco: Number(x.preco), qtd: Math.min(MAX_QTD, Math.max(1, parseInt(x.qtd, 10) || 1)) })) : [];
+        } catch { carrinho = []; try { localStorage.removeItem('carrinhoJLukas'); } catch {} }
+        function salvarCarrinho() { try { localStorage.setItem('carrinhoJLukas', JSON.stringify(carrinho)); } catch {} }
+        function atualizarIcone() { const c = document.getElementById('contagem-carrinho'); if (c) c.textContent = String(carrinho.reduce((t, i) => t + i.qtd, 0)); }
+        function abrirCarrinho() { modalCarrinho.classList.add('ativo'); modalCarrinho.setAttribute('aria-hidden', 'false'); renderizarCarrinho(); }
+        function fecharCarrinho() { modalCarrinho.classList.remove('ativo'); modalCarrinho.setAttribute('aria-hidden', 'true'); }
         window.abrirCarrinho = abrirCarrinho; window.fecharCarrinho = fecharCarrinho;
+        function alterarQtd(index, delta) {
+            const item = carrinho[index]; if (!item) return;
+            item.qtd += delta; if (item.qtd <= 0) carrinho.splice(index, 1); else item.qtd = Math.min(item.qtd, MAX_QTD);
+            salvarCarrinho(); atualizarIcone(); renderizarCarrinho();
+        }
         function renderizarCarrinho() {
             const lista = document.getElementById('itens-carrinho'); lista.replaceChildren(); let total = 0;
             if (!carrinho.length) { const p = document.createElement('p'); p.textContent = 'O seu carrinho está vazio.'; lista.appendChild(p); }
             carrinho.forEach((item, index) => {
-                const linha = document.createElement('div'); linha.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px;background:rgba(255,255,255,.05);padding:15px;border-radius:8px;';
-                const nome = document.createElement('span'); nome.textContent = item.nome; nome.style.color = 'white';
-                const grupo = document.createElement('div'); grupo.style.cssText = 'display:flex;align-items:center;gap:12px;';
-                const preco = Number(item.preco); total += preco; const valor = document.createElement('span'); valor.textContent = `R$ ${preco.toFixed(2).replace('.', ',')}`; valor.style.color = 'var(--dourado)';
-                const remover = document.createElement('button'); remover.type = 'button'; remover.textContent = 'Remover'; remover.setAttribute('aria-label', `Remover ${item.nome}`); remover.addEventListener('click', () => removerItem(index));
-                grupo.append(valor, remover); linha.append(nome, grupo); lista.appendChild(linha);
+                total += item.preco * item.qtd;
+                const linha = document.createElement('div'); linha.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px;background:rgba(255,255,255,.05);padding:15px;border-radius:8px;flex-wrap:wrap;';
+                const info = document.createElement('div'); const nome = document.createElement('span'); nome.textContent = item.nome; nome.style.cssText = 'color:white;display:block;';
+                const unit = document.createElement('small'); unit.textContent = reais(item.preco) + ' cada'; unit.style.color = 'var(--texto-cinza)'; info.append(nome, unit);
+                const ctrl = document.createElement('div'); ctrl.className = 'qtd-ctrl';
+                const menos = document.createElement('button'); menos.type = 'button'; menos.textContent = '−'; menos.setAttribute('aria-label', `Diminuir ${item.nome}`); menos.addEventListener('click', () => alterarQtd(index, -1));
+                const qtd = document.createElement('span'); qtd.textContent = String(item.qtd); qtd.style.cssText = 'color:white;min-width:20px;text-align:center;'; qtd.setAttribute('aria-live', 'polite');
+                const mais = document.createElement('button'); mais.type = 'button'; mais.textContent = '+'; mais.setAttribute('aria-label', `Aumentar ${item.nome}`); mais.addEventListener('click', () => alterarQtd(index, 1));
+                const sub = document.createElement('span'); sub.textContent = reais(item.preco * item.qtd); sub.style.cssText = 'color:var(--dourado);min-width:80px;text-align:right;';
+                const remover = document.createElement('button'); remover.type = 'button'; remover.className = 'item-remover'; remover.textContent = 'Remover'; remover.setAttribute('aria-label', `Remover ${item.nome}`); remover.addEventListener('click', () => alterarQtd(index, -item.qtd));
+                ctrl.append(menos, qtd, mais, sub, remover); linha.append(info, ctrl); lista.appendChild(linha);
             });
-            document.getElementById('total-carrinho').textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+            document.getElementById('total-carrinho').textContent = `Total: ${reais(total)}`;
         }
         function adicionarAoCarrinho(nome, preco) {
-            const valor = Number(preco); if (!String(nome).trim() || !Number.isFinite(valor) || valor < 0) return avisoLoja('Produto inválido.');
-            carrinho.push({ nome: String(nome).slice(0,100), preco: valor }); salvarCarrinho(); atualizarIcone(); avisoLoja('Produto adicionado ao carrinho.');
+            const valor = Number(preco); const n = String(nome).trim().slice(0, 100);
+            if (!n || !Number.isFinite(valor) || valor < 0) return avisoLoja('Produto inválido.');
+            const existente = carrinho.find(i => i.nome === n && i.preco === valor);
+            if (existente) { if (existente.qtd >= MAX_QTD) return avisoLoja(`Limite de ${MAX_QTD} unidades por produto.`); existente.qtd++; }
+            else carrinho.push({ nome: n, preco: valor, qtd: 1 });
+            salvarCarrinho(); atualizarIcone(); avisoLoja('Produto adicionado ao carrinho.');
         }
-        function removerItem(index) { carrinho.splice(index,1); salvarCarrinho(); atualizarIcone(); renderizarCarrinho(); }
-        window.removerItem = removerItem;
         function finalizarCompra() {
             if (!carrinho.length) return avisoLoja('Adicione produtos antes de finalizar.');
-            const total = carrinho.reduce((sum,item) => sum + Number(item.preco), 0);
-            const linhas = carrinho.map(item => `• ${item.nome} — R$ ${Number(item.preco).toFixed(2).replace('.', ',')}`);
-            const mensagem = `Olá, JLukas! Gostaria de solicitar estes produtos:\n\n${linhas.join('\n')}\n\nTotal estimado: R$ ${total.toFixed(2).replace('.', ',')}\n\nAguardo confirmação de disponibilidade e pagamento.`;
+            const total = carrinho.reduce((t, i) => t + i.preco * i.qtd, 0);
+            const linhas = carrinho.map(i => `• ${i.qtd}x ${i.nome} — ${reais(i.preco * i.qtd)}`);
+            const mensagem = `Olá, JLukas! Gostaria de solicitar estes produtos:\n\n${linhas.join('\n')}\n\nTotal estimado: ${reais(total)}\n\nAguardo confirmação de disponibilidade e pagamento.`;
             const url = `https://wa.me/${numeroWhatsAppLoja}?text=${encodeURIComponent(mensagem)}`;
             const link = document.createElement('a'); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
             document.body.appendChild(link); link.click(); link.remove();
@@ -115,7 +141,8 @@
                 if (!String(produto.nome || '').trim() || !Number.isFinite(preco) || preco < 0) return;
                 const card = document.createElement('article'); card.className = 'card-item'; card.style.cssText = 'display:flex;flex-direction:column;justify-content:space-between;height:100%;';
                 const topo = document.createElement('div'); const img = document.createElement('img');
-                try { const u = new URL(produto.imagem || '', location.origin); img.src = ['http:','https:'].includes(u.protocol) ? u.href : ''; } catch { img.src = ''; }
+                const fallbackProduto = 'https://images.unsplash.com/photo-1599305090598-fe179d501227?q=80&w=400&auto=format&fit=crop';
+                try { const u = new URL(produto.imagem || fallbackProduto, location.origin); img.src = ['http:','https:'].includes(u.protocol) ? u.href : fallbackProduto; } catch { img.src = fallbackProduto; }
                 img.alt = String(produto.nome); img.loading = 'lazy'; img.style.cssText = 'width:100%;height:250px;object-fit:cover;border-radius:8px;margin-bottom:15px;border:1px solid #333;';
                 const nome = document.createElement('h3'); nome.textContent = String(produto.nome); nome.style.cssText = 'color:var(--branco);font-size:1.2rem;margin-bottom:10px;'; topo.append(img,nome);
                 const baixo = document.createElement('div'); const valor = document.createElement('span'); valor.textContent = `R$ ${preco.toFixed(2).replace('.', ',')}`; valor.className = 'preco-tag'; valor.style.cssText = 'display:inline-block;margin-bottom:15px;font-size:1.4rem;';

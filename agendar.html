@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <title>JLukas Barber Shop - Agendamento</title>
+    <title>Agendar horário — JLukas Barber Shop</title>
+    <meta name="description" content="Reserve seu horário na JLukas Barber Shop em 4 passos rápidos.">
+    <meta name="theme-color" content="#030303">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
@@ -21,6 +27,7 @@
 </script>
 </head>
 <body>
+    <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
 
     <nav class="navbar">
         <div class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">JLukas Barber Shop</a></div>
@@ -30,7 +37,7 @@
         </ul>
     </nav>
 
-    <div class="container-form">
+    <div class="container-form" id="conteudo">
         <div class="form-box" style="min-height: 450px; position: relative;">
             <h2>Reserve o seu Horário</h2>
             
@@ -47,11 +54,11 @@
                 <div id="bloco-passo-1" class="bloco-etapa ativo">
                     <div class="campo">
                         <label>Seu Nome:</label>
-                        <input type="text" id="nome" placeholder="A carregar..." required>
+                        <input type="text" id="nome" autocomplete="name" maxlength="100" placeholder="Seu nome completo" required>
                     </div>
                     <div class="campo">
                         <label>WhatsApp (com DDD):</label>
-                        <input type="tel" id="whatsapp" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="A carregar..." required>
+                        <input type="tel" id="whatsapp" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(61) 99999-9999" required>
                     </div>
                     <button type="button" class="btn-confirmar" onclick="avancarPasso(1)" style="margin-top: 20px;">CONTINUAR ➔</button>
                 </div>
@@ -99,6 +106,7 @@
                 </div>
 
                 <div id="bloco-passo-4" class="bloco-etapa">
+                    <div id="resumo-agendamento" class="resumo-box" aria-live="polite"></div>
                     <div class="campo" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--borda); margin-bottom: 20px;">
                         <label style="color: var(--dourado);">🔄 Agendamento Inteligente:</label>
                         <select id="recorrencia" style="background: #000; margin-top: 5px;">
@@ -109,7 +117,7 @@
                     </div>
 
                     <div style="background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(0,0,0,0.5)); border: 1px solid var(--dourado); padding: 15px; border-radius: 12px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;" id="caixa-upsell">
-                        <img src="https://images.unsplash.com/photo-1599305090598-fe179d501227?q=80&w=200&auto=format&fit=crop" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
+                        <img alt="" src="https://images.unsplash.com/photo-1599305090598-fe179d501227?q=80&w=200&auto=format&fit=crop" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
                         <div style="flex: 1;">
                             <h4 style="color: var(--dourado); font-size: 0.9rem;">🔥 Pomada Matte (+ R$ 45,00)</h4>
                         </div>

@@ -1,6 +1,6 @@
 /* JLUKAS BARBER SHOP - MASTER CSS */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+/* Fonte Poppins carregada via <link> em cada página (evita @import bloqueante). */
 
 :root {
     /* Cores Premium */
@@ -469,42 +469,9 @@ section { padding: 120px 5%; text-align: center; }
         transform: translateY(100%); transition: transform 0.4s; padding-bottom: 50px;
     }
     #modal-carrinho.ativo .form-box { transform: translateY(0); }
-}
-    .nav-links.active { top: 0; }
-    .nav-links li { margin: 25px 0; }
-    .nav-links a { font-size: 1.5rem; }
-    
-    .hero { background-attachment: scroll; } 
     .hero-content h1 { font-size: 2.8rem; letter-spacing: 2px; }
     .btn-principal { padding: 18px 30px; font-size: 1rem; width: 100%; }
-    
-    section { padding: 100px 20px; }
-    .titulo-secao { font-size: 2.2rem; }
-    .cards-container { flex-direction: column; align-items: center; gap: 30px; }
-    .card-item { width: 100%; max-width: 100%; padding: 25px 20px; }
-    
-    .container-form { padding: 100px 15px 40px; }
-    .form-box { padding: 40px 25px; border-radius: 20px; }
-    .form-box h2 { font-size: 1.8rem; }
-    
-    .login-box { padding: 40px 25px !important; }
-    
-    .campo input, .campo select { font-size: 16px !important; padding: 18px 15px; }
-    .grade-horarios { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .btn-horario { padding: 18px 5px; font-size: 0.95rem; }
-    .btn-horario:active { transform: scale(0.95); background: var(--dourado); color: black; }
-    
-    .cart-icon { bottom: 20px; right: 20px; padding: 18px; font-size: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
-    #modal-carrinho {
-        display: flex !important; flex-direction: column; justify-content: flex-end;
-        visibility: hidden; opacity: 0; transition: opacity 0.3s ease;
-    }
-    #modal-carrinho.ativo { visibility: visible; opacity: 1; }
-    #modal-carrinho .form-box {
-        margin: 0; max-width: 100%; border-radius: 30px 30px 0 0;
-        transform: translateY(100%); transition: transform 0.4s; padding-bottom: 50px;
-    }
-    #modal-carrinho.ativo .form-box { transform: translateY(0); }
+}
 
     /* ==========================================================================
    11. GALERIA DE ESTILOS (LOOKBOOK) E POP-UP
@@ -755,4 +722,85 @@ section { padding: 120px 5%; text-align: center; }
 @keyframes deslizarEsquerda {
     from { opacity: 0; transform: translateX(-30px); }
     to { opacity: 1; transform: translateX(0); }
+}
+
+/* ==========================================================================
+   16. AJUSTES DE ESTADO (agendamento)
+   ========================================================================== */
+.texto-vazio { color: var(--texto-cinza); text-align: center; grid-column: 1 / -1; padding: 10px 0; }
+button.card-selecao, button.card-servico { font: inherit; color: inherit; }
+.btn-horario:disabled { opacity: .35; cursor: not-allowed; }
+.btn-horario.selecionado { background-color: rgba(212,175,55,.1); color: var(--dourado); border-color: var(--dourado); }
+.link-recuperar-senha:hover { color: var(--dourado-hover); }
+
+/* ==========================================================================
+   17. UPGRADE 02 — acessibilidade, UX e novos componentes
+   ========================================================================== */
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+.skip-link { position: absolute; left: 10px; top: -60px; background: var(--dourado); color: #000; padding: 10px 16px; border-radius: 8px; font-weight: 700; z-index: 100000; text-decoration: none; transition: top .2s; }
+.skip-link:focus { top: 10px; }
+:focus-visible { outline: 2px solid var(--dourado); outline-offset: 3px; }
+.navbar { transition: padding .3s ease, background-color .3s ease; }
+.navbar.scrolled { padding-top: 12px; padding-bottom: 12px; background-color: rgba(3,3,3,.92); }
+.menu-toggle:focus-visible { outline-offset: 6px; }
+
+/* Animação de entrada (só ativa quando o JS roda) */
+.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+.js .reveal.visivel { opacity: 1; transform: none; }
+
+/* Como funciona */
+.secao-passos { padding: 100px 5%; background: var(--bg-fundo); text-align: center; }
+.passos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; max-width: 1000px; margin: 0 auto; }
+.passo { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 20px; padding: 35px 25px; }
+.passo .num { display: inline-flex; width: 48px; height: 48px; align-items: center; justify-content: center; border-radius: 50%; background: var(--dourado); color: #000; font-weight: 800; margin-bottom: 18px; }
+.passo h3 { color: var(--branco); font-weight: 500; margin-bottom: 10px; }
+.passo p { color: var(--texto-cinza); font-weight: 300; font-size: .95rem; line-height: 1.7; }
+
+/* FAQ acessível (details/summary) */
+details.faq-item { padding: 0; }
+details.faq-item summary { list-style: none; cursor: pointer; padding: 26px 40px 26px 0; position: relative; color: var(--branco); font-size: 1.2rem; font-weight: 400; letter-spacing: .5px; }
+details.faq-item summary::-webkit-details-marker { display: none; }
+details.faq-item summary::after { content: '+'; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: var(--dourado); font-size: 1.6rem; transition: transform .3s; }
+details.faq-item[open] summary::after { content: '–'; }
+details.faq-item p { padding-bottom: 26px; }
+
+/* Botão flutuante do WhatsApp */
+.wpp-float { position: fixed; bottom: 25px; right: 25px; width: 58px; height: 58px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(37,211,102,.45); z-index: 1000; transition: transform .3s; }
+.wpp-float:hover { transform: scale(1.1); }
+.wpp-float svg { width: 30px; height: 30px; fill: #fff; }
+
+/* Resumo do agendamento */
+.resumo-box { background: rgba(255,255,255,.02); border: 1px solid var(--borda); border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+.resumo-box h4 { color: var(--dourado); margin-bottom: 12px; font-size: .95rem; letter-spacing: 1px; text-transform: uppercase; }
+.resumo-linha { display: flex; justify-content: space-between; gap: 15px; padding: 6px 0; font-size: .92rem; color: var(--texto-cinza); }
+.resumo-linha strong { color: var(--branco); font-weight: 500; text-align: right; }
+.resumo-total { border-top: 1px solid var(--borda); margin-top: 8px; padding-top: 12px; }
+.resumo-total strong { color: var(--dourado); font-size: 1.1rem; }
+.btn-senha { display: block; margin: 8px 0 0 auto; background: none; border: 0; color: var(--texto-cinza); font-size: .85rem; cursor: pointer; text-decoration: underline; }
+
+/* Perfil */
+.perfil-wrap { max-width: 800px; margin: 100px auto; padding: 20px; }
+.perfil-topo { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.perfil-topo .btn-principal { padding: 12px 22px; font-size: .9rem; width: auto; }
+.perfil-secao { margin-top: 35px; color: var(--texto-cinza); font-size: .85rem; letter-spacing: 2px; text-transform: uppercase; }
+.ag-card { background: #121212; padding: 20px; border-radius: 12px; border: 1px solid #2a2a2a; }
+.ag-card header { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ag-card p { color: var(--texto-cinza); margin-top: 8px; font-size: .95rem; }
+.badge { padding: 4px 12px; border-radius: 999px; font-size: .75rem; font-weight: 700; letter-spacing: .5px; border: 1px solid currentColor; }
+.badge-pendente { color: var(--dourado); } .badge-confirmado { color: #4fc3f7; }
+.badge-concluido { color: var(--sucesso); } .badge-cancelado { color: var(--perigo); }
+.ag-acoes { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+.btn-secundario { background: transparent; color: var(--dourado); border: 1px solid var(--dourado); border-radius: 8px; padding: 10px 16px; cursor: pointer; font: inherit; font-size: .9rem; text-decoration: none; }
+.btn-perigo { color: var(--perigo); border-color: var(--perigo); }
+.btn-secundario:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Carrinho com quantidade */
+.qtd-ctrl { display: inline-flex; align-items: center; gap: 8px; }
+.qtd-ctrl button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--dourado); background: transparent; color: var(--dourado); cursor: pointer; font-size: 1.1rem; line-height: 1; }
+.item-remover { background: none; border: 0; color: var(--perigo); cursor: pointer; font: inherit; font-size: .85rem; text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .js .reveal { opacity: 1; transform: none; }
 }

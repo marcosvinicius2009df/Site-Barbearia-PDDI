@@ -17,6 +17,28 @@ const inputEmail = document.getElementById('email');
 const inputSenha = document.getElementById('senha');
 let modoLogin = true;
 
+// Máscara de telefone no cadastro
+if (inputZap) inputZap.addEventListener('input', () => {
+    const d = inputZap.value.replace(/\D/g, '').slice(0, 11);
+    inputZap.value = d.length <= 2 ? d : d.length <= 6 ? `(${d.slice(0, 2)}) ${d.slice(2)}` : d.length <= 10 ? `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}` : `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+});
+// Mostrar/ocultar senha
+if (inputSenha) {
+    const verSenha = document.createElement('button'); verSenha.type = 'button'; verSenha.className = 'btn-senha'; verSenha.textContent = 'Mostrar senha';
+    verSenha.setAttribute('aria-pressed', 'false');
+    verSenha.addEventListener('click', () => {
+        const mostrar = inputSenha.type === 'password'; inputSenha.type = mostrar ? 'text' : 'password';
+        verSenha.textContent = mostrar ? 'Ocultar senha' : 'Mostrar senha'; verSenha.setAttribute('aria-pressed', String(mostrar));
+    });
+    inputSenha.closest('.campo')?.appendChild(verSenha);
+}
+
+// Recuperação de senha pelo Firebase Authentication.
+const recuperar = document.createElement('button'); recuperar.type = 'button'; recuperar.textContent = 'Esqueci minha senha';
+recuperar.className = 'link-recuperar-senha'; recuperar.style.cssText = 'display:block;margin:14px auto 0;background:none;border:0;color:var(--dourado);text-decoration:underline;cursor:pointer;';
+if (formAuth) formAuth.appendChild(recuperar);
+
+
 if (linkAlternar) linkAlternar.addEventListener('click', event => {
     event.preventDefault(); modoLogin = !modoLogin;
     tituloAuth.textContent = modoLogin ? 'Entrar na Conta' : 'Criar Nova Conta';
@@ -25,12 +47,10 @@ if (linkAlternar) linkAlternar.addEventListener('click', event => {
     linkAlternar.textContent = modoLogin ? 'Cadastre-se' : 'Fazer Login';
     divNome.style.display = modoLogin ? 'none' : 'block'; divZap.style.display = modoLogin ? 'none' : 'block';
     inputNome.required = !modoLogin; inputZap.required = !modoLogin;
+    inputSenha.autocomplete = modoLogin ? 'current-password' : 'new-password';
+    recuperar.style.display = modoLogin ? 'block' : 'none';
 });
 
-// Recuperação de senha pelo Firebase Authentication.
-const recuperar = document.createElement('button'); recuperar.type = 'button'; recuperar.textContent = 'Esqueci minha senha';
-recuperar.className = 'link-recuperar-senha'; recuperar.style.cssText = 'display:block;margin:14px auto 0;background:none;border:0;color:var(--dourado);text-decoration:underline;cursor:pointer;';
-if (formAuth) formAuth.appendChild(recuperar);
 recuperar.addEventListener('click', async () => {
     const email = inputEmail?.value.trim();
     if (!email) return mostrarAviso('Informe seu e-mail para receber o link de recuperação.', 'var(--perigo)');
@@ -51,10 +71,17 @@ if (formAuth) formAuth.addEventListener('submit', async event => {
         } else {
             const zap = inputZap.value.replace(/\D/g, '');
             const credencial = await auth.createUserWithEmailAndPassword(email, senha);
-            await database.ref(`clientes/${credencial.user.uid}`).set({
-                nome: inputNome.value.trim().slice(0, 100), whatsapp: zap, email,
-                dataCadastro: new Date().toISOString()
-            });
+            try {
+                await database.ref(`clientes/${credencial.user.uid}`).set({
+                    nome: inputNome.value.trim().slice(0, 100), whatsapp: zap, email,
+                    dataCadastro: new Date().toISOString()
+                });
+            } catch (erroPerfil) {
+                // A conta já existe; não deixa o usuário preso. Ele informa nome/WhatsApp no agendamento.
+                console.error('Conta criada, mas o cadastro não foi salvo:', erroPerfil);
+                mostrarAviso('Conta criada, mas não foi possível salvar seus dados. Informe-os no agendamento.', 'var(--perigo)');
+                await new Promise(r => setTimeout(r, 2500));
+            }
             window.location.href = 'index.html';
         }
     } catch (error) {

@@ -15,6 +15,10 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig); 
 }
 
-// Cria as variáveis globais para o Banco de Dados e Autenticação
-const auth = firebase.auth();
+// Variáveis globais. O auth fica null se a página não carregar o SDK de Authentication,
+// em vez de quebrar o script e deixar o "database" indefinido.
+const auth = typeof firebase.auth === 'function' ? firebase.auth() : null;
 const database = firebase.database();
+
+// WhatsApp oficial (código do país + DDD + número, só dígitos). Altere SOMENTE aqui.
+const WHATSAPP_OFICIAL = '5561999999999';

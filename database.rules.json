@@ -1,0 +1,80 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "admins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
+      }
+    },
+    "clientes": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).exists())",
+        ".write": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).exists())",
+        ".validate": "newData.hasChildren(['nome','whatsapp','email'])"
+      }
+    },
+    "barbeiros": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).exists()"
+    },
+    "servicos": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).exists()"
+    },
+    "galeria": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).exists()"
+    },
+    "produtos": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).exists()"
+    },
+    "bloqueios": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).exists()"
+    },
+    "agendamentos": {
+      ".indexOn": [
+        "cliente_uid"
+      ],
+      ".read": "auth != null && (root.child('admins').child(auth.uid).exists() || (query.orderByChild === 'cliente_uid' && query.equalTo === auth.uid))",
+      "$id": {
+        ".write": "auth != null && (root.child('admins').child(auth.uid).exists() || (!data.exists() && newData.child('cliente_uid').val() === auth.uid && newData.child('status').val() === 'Pendente'))",
+        ".validate": "newData.hasChildren(['cliente','whatsapp','cliente_uid','barbeiro','servico','data','horario','status'])",
+        "avaliado": {
+          ".write": "auth != null && data.parent().child('cliente_uid').val() === auth.uid && data.parent().child('status').val() === 'Concluído'"
+        },
+        "status": {
+          ".write": "auth != null && data.parent().child('cliente_uid').val() === auth.uid && data.val() === 'Pendente' && newData.val() === 'Cancelado'"
+        }
+      }
+    },
+    "reservas_slots": {
+      ".read": "auth != null",
+      "$data": {
+        "$barbeiro": {
+          "$hora": {
+            ".write": "auth != null && (root.child('admins').child(auth.uid).exists() || (!data.exists() && newData.child('uid').val() === auth.uid) || (data.exists() && !newData.exists() && data.child('uid').val() === auth.uid))",
+            ".validate": "!newData.exists() || newData.hasChildren(['bookingId','uid','criadoEm'])"
+          }
+        }
+      }
+    },
+    "lista_espera": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).exists()",
+      "$id": {
+        ".write": "auth != null && !data.exists() && newData.child('cliente_uid').val() === auth.uid",
+        ".validate": "newData.hasChildren(['cliente','whatsapp','data','cliente_uid'])"
+      }
+    },
+    "avaliacoes": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).exists()",
+      "$id": {
+        ".write": "auth != null && !data.exists() && newData.child('cliente_uid').val() === auth.uid && root.child('agendamentos').child(newData.child('agendamento_id').val()).child('cliente_uid').val() === auth.uid",
+        ".validate": "newData.child('nota').isNumber() && newData.child('nota').val() >= 1 && newData.child('nota').val() <= 5"
+      }
+    }
+  }
+}
